@@ -1,9 +1,19 @@
 # Swiper
 Swiper Metadata Filter for Domino Designer Source Control
 
+## Description
+Swiper is a plugin for Domino Designer which is used in tandem with the Source Control Enablement.
+When Domino Design Elements are exported for Source Control, they contain unnecessary metadata which makes Branching and Merging almost impossible due to pointless merge conflicts.
+Swiper will filter this metadata from the exported files, allowing proper branching and merging.
+
+Swiper is the sucessor to the Dora project. The Dora project was specifically built for use with Git, whereas Swiper can be used for Git, Mercurial, .
+Installation is also much simpler.
+
+Swiper will be released for alpha testing very soon…
+
 # Support from YourKit
 
-YourKit have generously granted an Open Source licence for the Swiper project
+YourKit have generously granted the Swiper project an Open Source licence to use their excellent Java Profiler.
 
 ![YourKit Logo](https://www.yourkit.com/images/yklogo.png "YourKit Logo")
 
