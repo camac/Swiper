@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="SwiperPostSyncBuilder"
+         name="Swiper Post Sync Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.openntf.swiper.builder.post.SwiperPostSyncBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="SwiperPreSyncBuilder"
+         name="Swiper Pre Sync Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.openntf.swiper.builder.pre.SwiperPreSyncBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="swiperNature"
+         name="Swiper Metadata Filter Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.openntf.swiper.builder.SwiperNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.openntf.swiper.SwiperPostSyncBuilder">
+      </builder>
+      <builder
+            id="org.openntf.swiper.SwiperPreSyncBuilder">
+      </builder>
+   </extension>
+      
+   
+   <extension
+         id="xmlProblem"
+         name="Swiper Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.openntf.swiper.pref.SwiperPreferencePage"
+            id="org.openntf.swiper.swiperPage"
+            name="Swiper">
+      </page>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="org.openntf.swiper.menuPopupNsf"
+               label="Swiper">
+            <command
+                  commandId="org.openntf.swiper.commands.addswiper"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.openntf.swiper.commands.removeswiper"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:file?after=additions2">
+         <menu
+               id="org.openntf.swiper.menuFileNsf"
+               label="Swiper">
+            <command
+                  commandId="org.openntf.swiper.commands.addswiper"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.openntf.swiper.commands.removeswiper"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.openntf.swiper.commands.addswiper"
+            name="Add Swiper">
+      </command>
+      <command
+            id="org.openntf.swiper.commands.removeswiper"
+            name="Remove Swiper">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.openntf.swiper.handlers.AddSwiperHandler"
+            commandId="org.openntf.swiper.commands.addswiper">
+         <enabledWhen>
+         
+          <with variable="selection">
+      <iterate ifEmpty="true" operator="and">
+         <adapt type="org.eclipse.core.resources.IResource">
+            <not>
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="org.openntf.swiper.swiperNature" />
+            </not>
+         </adapt>
+      </iterate>
+   </with>
+         
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.openntf.swiper.handlers.RemoveSwiperHandler"
+            commandId="org.openntf.swiper.commands.removeswiper">
+                     <enabledWhen>
+                     
+                     <with variable="selection">
+      <iterate ifEmpty="false" operator="or">
+         <adapt type="org.eclipse.core.resources.IResource">
+            <test
+                  property="org.eclipse.core.resources.projectNature"
+                  value="org.openntf.swiper.swiperNature" />
+         </adapt>
+      </iterate>
+   </with>
+                     
+         </enabledWhen>
+            
+      </handler>
+   </extension>
+
+
+</plugin>

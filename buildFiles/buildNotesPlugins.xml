@@ -1,0 +1,210 @@
+<project name="Swiper" xmlns:bxp="antlib:com.gregorbyte.buildxpages.ant" default="clean" basedir="..">
+
+	<taskdef uri="antlib:com.gregorbyte.buildxpages.ant" resource="com/gregorbyte/buildxpages/ant/antlib.xml">
+	</taskdef>
+
+	<description>Build Tasks Swiper Designer Plugin</description>
+
+	<property file="buildFiles/mybuildnotes.properties" />
+
+	<property name="featureId" value="org.openntf.swiper.feature" />
+
+	<property name="buildDir" location="buildDirectory" />
+	<property name="buildConfigDir" location="buildConfig" />
+	<property name="pluginsDir" location="${buildDir}/plugins" />
+	<property name="featuresDir" location="${buildDir}/features" />
+
+	<property name="updateSitePluginsDir" location="${updateSiteDir}/plugins" />
+	<property name="updateSiteFeaturesDir" location="${updateSiteDir}/features" />
+
+	<property name="equinoxLauncherJar" location="${eclipseBase}\plugins\org.eclipse.equinox.launcher_${equinoxLauncherVersion}.jar" />
+	<property name="pdeBuildXml" location="${eclipseBase}\plugins\org.eclipse.pde.build_${pdeBuildVersion}\scripts\build.xml" />
+
+	<property name="buildId" value="Swiper" />
+	<property name="buildLabel" value="Swiper" />
+	<property name="buildNumber" value="0" />
+
+	<property name="builtPluginsZip" location="${buildDir}\${buildLabel}\${featureId}-${buildId}.zip" />
+
+	<target name="clean">
+		<delete dir="${buildDir}" />
+		<delete dir="eclipse" />
+	</target>
+
+	<target name="copyPlugins" depends="init">
+
+		<copy todir="${pluginsDir}/org.openntf.swiper">
+			<fileset dir="org.openntf.swiper">
+				<exclude name="**/bin/**">
+				</exclude>
+			</fileset>
+		</copy>
+
+		<copy todir="${featuresDir}/org.openntf.swiper.feature">
+			<fileset dir="org.openntf.swiper.feature" />
+		</copy>
+
+	</target>
+
+	<target name="init" depends="clean">
+		<mkdir dir="${buildDir}">
+		</mkdir>
+		<mkdir dir="${pluginsDir}">
+		</mkdir>
+		<mkdir dir="${featuresDir}">
+		</mkdir>
+	</target>
+
+	<target name="getJvmJars">
+
+		<fileset id="jvmLibJars" dir="${notesProgDir}/jvm/lib">
+			<include name="*.jar" />
+		</fileset>
+
+		<fileset id="jvmLibExtJars" dir="${notesProgDir}/jvm/lib/ext">
+			<include name="*.jar" />
+		</fileset>
+
+		<pathconvert targetos="unix" property="jvmLibJarsList" refid="jvmLibJars" pathsep=";" />
+		<pathconvert targetos="unix" property="jvmLibExtJarsList" refid="jvmLibExtJars" pathsep=";" />
+
+		<property name="JavaSE16Jars" value="${jvmLibJarsList};${jvmLibExtJarsList}" />
+
+	</target>
+
+	<target name="getAllNestedJvmJarsNotes">
+
+		<fileset id="jvmjarsFileset" dir="${notesProgDir}/jvm">
+			<include name="**/*.jar" />
+		</fileset>
+
+		<pathconvert targetos="unix" property="JavaSE16Jars" refid="jvmjarsFileset" pathsep=";" />
+
+	</target>
+
+	<target name="getAllNestedJvmJars">
+
+		<fail unless="notesProgDir">notesProgDir must be set</fail>
+
+		<fileset id="jvmjarsFileset" dir="${notesProgDir}/jvm">
+			<include name="**/*.jar" />
+		</fileset>
+
+		<pathconvert targetos="unix" property="JavaSE16Jars" refid="jvmjarsFileset" pathsep=";" />
+
+		<echo message="list = ${JavaSE16Jars}" />
+
+
+	</target>
+
+	<target name="buildPlugins" depends="getAllNestedJvmJars">
+
+		<fail unless="eclipseBase">eclipseBase property must be set</fail>
+		<fail unless="pdeBuildVersion">pdeBuildVersion property must be set</fail>
+		<fail unless="equinoxLauncherVersion">equinoxLauncherVersion property must be set</fail>
+		<fail unless="notesProgDir">notesProgDir property must be set</fail>
+
+		<pathconvert targetos="unix" property="notesProgDir.unix">
+			<path location="${notesProgDir}" />
+		</pathconvert>
+
+		<java jar="${equinoxLauncherJar}" fork="true" failonerror="true">
+
+			<arg value="-application" />
+			<arg value="org.eclipse.ant.core.antRunner" />
+
+			<arg value="-buildfile" />
+			<arg value="${pdeBuildXml}" />
+
+			<arg value="-Dbuilder=${buildConfigDir}" />
+			<arg value="-DbuildDirectory=${buildDir}" />
+			<arg value="-DskipMaps=true" />
+			<arg value="-DskipFetch=true" />
+			<arg value="-DrunPackager=false" />
+			<arg value="-DoutputUpdateJars=true" />
+
+			<arg value="-DbuildId=${buildId}" />
+			<arg value="-DbuildLabel=${buildLabel}" />
+
+			<arg value="-DarchivePrefix=eclipse" />
+
+			<arg value="-Dbase=${eclipseBase}" />
+			<arg value="-DbaseLocation=${eclipseBase}" />
+
+			<arg value="-DskipBase=true" />
+
+			<arg value="-DpluginPath=${notesProgDir.unix}/framework/rcp/eclipse;${notesProgDir.unix}/framework/shared/eclipse" />
+
+			<arg value="-DJavaSE-1.6=${JavaSE16Jars}" />
+			<arg value="-DtopLevelElementType=feature" />
+			<arg value="-DtopLevelElementId=${featureId}" />
+
+			<arg value="-DcompilerArg=-g" />
+
+		</java>
+
+	</target>
+
+	<target name="unzipBuiltPlugins">
+
+		<unzip src="${builtPluginsZip}" dest="." />
+
+	</target>
+
+	<target name="clearUpdateSite">
+
+		<fail unless="updateSiteDir">updateSiteDir must be set</fail>
+
+		<echo>${updateSiteDir}</echo>
+
+		<delete>
+			<fileset dir="${updateSitePluginsDir}" includes="org.openntf.swiper_*.jar" />
+		</delete>
+
+		<delete>
+			<fileset dir="${updateSiteFeaturesDir}" includes="org.openntf.swiper.feature_*.jar" />
+		</delete>
+
+	</target>
+
+	<target name="copyPluginsToUpdateSite" depends="clearUpdateSite">
+
+		<fail unless="updateSiteDir">updateSiteDir must be set</fail>
+
+		<unzip src="${builtPluginsZip}" dest="${updateSitePluginsDir}">
+			<patternset>
+				<include name="**/plugins/*.jar" />
+			</patternset>
+			<mapper type="flatten" />
+		</unzip>
+
+		<unzip src="${builtPluginsZip}" dest="${updateSiteFeaturesDir}">
+			<patternset>
+				<include name="**/features/*.jar" />
+			</patternset>
+			<mapper type="flatten" />
+		</unzip>
+
+		<bxp:generatesitexml eclipseDir="${updateSiteDir}" />
+
+	</target>
+
+	<target name="echoprops">
+		<echoproperties></echoproperties>
+	</target>
+	
+	<target name="dist" depends="echoprops,copyPlugins,buildPlugins,unzipBuiltPlugins,copyPluginsToUpdateSite">
+
+	</target>
+
+	<target name="install">
+
+		<fail unless="updateSiteNsf.server">Update Site NSF Server must be provided</fail>
+		<fail unless="updateSiteNsf.filepath">Update Site NSF Filepath must be provided</fail>
+		<fail unless="updateSiteDir">Update Site NSF Filepath must be provided</fail>
+
+		<bxp:importplugins server="${updateSiteNsf.server}" database="${updateSiteNsf.filepath}" sitexml="${updateSiteDir}\site.xml" />
+
+	</target>
+
+</project>

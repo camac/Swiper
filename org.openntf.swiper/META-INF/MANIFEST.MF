@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenNTF Swiper Plugin
+Bundle-SymbolicName: org.openntf.swiper;singleton:=true
+Bundle-Version: 0.1.2.qualifier
+Bundle-Activator: org.openntf.swiper.Activator
+Bundle-Vendor: OpenNTF
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide,
+ com.ibm.designer.domino.team,
+ com.ibm.designer.domino.ide.resources,
+ com.ibm.designer.prj.resources,
+ org.eclipse.jface,
+ com.ibm.designer.domino.preferences,
+ com.ibm.commons.swt,
+ org.eclipse.swt,
+ com.ibm.commons.iloader,
+ com.ibm.commons.swt.data,
+ com.ibm.commons,
+ org.eclipse.core.expressions
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Export-Package: org.openntf.swiper,
+ org.openntf.swiper.builder
+Import-Package: com.ibm.commons.util
