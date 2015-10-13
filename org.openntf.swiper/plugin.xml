@@ -88,6 +88,16 @@
                   mode="FORCE_TEXT"
                   style="push">
             </command>
+            <command
+                  commandId="org.openntf.swiper.commands.savedatabaseprops"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.openntf.swiper.commands.restoredatabaseprops"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
       <menuContribution
@@ -105,6 +115,16 @@
                   mode="FORCE_TEXT"
                   style="push">
             </command>
+            <command
+                  commandId="org.openntf.swiper.commands.savedatabaseprops"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.openntf.swiper.commands.restoredatabaseprops"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -117,6 +137,14 @@
       <command
             id="org.openntf.swiper.commands.removeswiper"
             name="Remove Swiper">
+      </command>
+      <command
+            id="org.openntf.swiper.commands.savedatabaseprops"
+            name="Save Database Properties">
+      </command>
+      <command
+            id="org.openntf.swiper.commands.restoredatabaseprops"
+            name="Restore Database Properties">
       </command>
    </extension>
    <extension
@@ -157,6 +185,40 @@
                      
          </enabledWhen>
             
+      </handler>
+      <handler
+            class="org.openntf.swiper.handlers.RestoreDatabasePropertiesHandler"
+            commandId="org.openntf.swiper.commands.restoredatabaseprops">
+            <enabledWhen>
+                     
+                     <with variable="selection">
+      <iterate ifEmpty="false" operator="or">
+         <adapt type="org.eclipse.core.resources.IResource">
+            <test
+                  property="org.eclipse.core.resources.projectNature"
+                  value="org.openntf.swiper.swiperNature" />
+         </adapt>
+      </iterate>
+   </with>
+                     
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.openntf.swiper.handlers.SaveDatabasePropertiesHandler"
+            commandId="org.openntf.swiper.commands.savedatabaseprops">
+            <enabledWhen>
+                     
+                     <with variable="selection">
+      <iterate ifEmpty="false" operator="or">
+         <adapt type="org.eclipse.core.resources.IResource">
+            <test
+                  property="org.eclipse.core.resources.projectNature"
+                  value="org.openntf.swiper.swiperNature" />
+         </adapt>
+      </iterate>
+   </with>
+                     
+         </enabledWhen>
       </handler>
    </extension>
 

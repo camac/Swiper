@@ -102,6 +102,39 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 	}
 
+	public static void filterDiskFile(IFile diskFile, IProgressMonitor monitor) {
+
+		SwiperUtil.logInfo("Filter" + diskFile.getName());
+
+		if (!diskFile.exists())
+			return;
+
+		try {
+
+			FilterMetadataAction fma = new FilterMetadataAction();
+			
+			Transformer transformer = fma.getTransformer();
+
+			if (diskFile != null) {
+				fma.filter(diskFile, transformer, monitor);
+			}
+
+		} catch (TransformerConfigurationException e) {
+			SwiperUtil.logInfo(e.getMessage());
+		} catch (TransformerException e) {
+			SwiperUtil.logInfo(e.getMessage());
+		} catch (CoreException e) {
+			SwiperUtil.logInfo(e.getMessage());
+		} catch (FileNotFoundException e) {
+			SwiperUtil.logInfo(e.getMessage());
+		} catch (IOException e) {
+			SwiperUtil.logInfo(e.getMessage());
+		} finally {
+
+		}
+
+	}
+	
 	private void filter(IFile diskFile, Transformer transformer, IProgressMonitor monitor)
 			throws TransformerException, CoreException, IOException {
 
