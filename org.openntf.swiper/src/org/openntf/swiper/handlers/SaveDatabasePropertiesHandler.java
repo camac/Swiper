@@ -57,6 +57,11 @@ public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 
 			saveDBIcon(prefix, monitor);
 
+			// WHat about Resources/Images/$DBIcon
+			/**
+			 * also check out DominoDesignerProject resetDBIcon() and resetOldDBIcon()
+			 */
+			
 		}
 
 		return null;
