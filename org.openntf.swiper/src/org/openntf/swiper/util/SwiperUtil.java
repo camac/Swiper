@@ -41,6 +41,19 @@ public class SwiperUtil {
 	public static LogMgr SWIPER_LOG = Log.load("org.openntf.swiper", "Logger used for Swiper");
 	private static final String MARKER_TYPE = "org.openntf.swiper.xmlProblem";
 
+	public static final String NSF_FILE_DBPROPS = "AppProperties/database.properties";
+	public static final String NSF_FILE_ICONNOTE = "Resources/IconNote";
+	public static final String NSF_FILE_DBICON = "AppProperties/$DBIcon";
+	public static final String NSF_FILE_RESDBICON = "Resources/Images/$DBIcon";
+	public static final String NSF_FILE_XSPPROPS = "WebContent/WEB-INF/xsp.properties";
+
+	public static final String SAVE_FILE_DBPROPS = "Swiper/%s.database.properties";
+	public static final String SAVE_FILE_ICONNOTE = "Swiper/%s.IconNote";
+	public static final String SAVE_FILE_DBICON = "Swiper/%s.$DBIcon";
+	public static final String SAVE_FILE_RESDBICON = "Swiper/%s.Images.$DBIcon";
+	public static final String SAVE_FILE_XSPPROPS = "Swiper/%s.xsp.properties";
+
+	
 	private static boolean filterEverything = true;
 
 	public static Set<String> getCanFilterIds() {

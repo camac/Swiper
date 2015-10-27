@@ -6,6 +6,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -20,15 +21,15 @@ import com.ibm.designer.domino.ide.resources.NsfException;
 import com.ibm.designer.domino.ide.resources.jni.NotesDesignElement;
 import com.ibm.designer.domino.team.action.AbstractTeamHandler;
 
+import com.ibm.designer.domino.team.util.SyncUtil;
+
+import static org.openntf.swiper.util.SwiperUtil.*;
+
 public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 
-	private final String NSF_FILE_DBPROPS = "AppProperties/database.properties";
-	private final String NSF_FILE_ICONNOTE = "Resources/IconNote";
-	private final String NSF_FILE_DBICON = "AppProperties/$DBIcon";
+	private boolean odponly = false;
 
-	private final String SAVE_FILE_DBPROPS = "Swiper/%s.database.properties";
-	private final String SAVE_FILE_ICONNOTE = "Swiper/%s.IconNote";
-	private final String SAVE_FILE_DBICON = "Swiper/%s.$DBIcon";
+	private IProject diskProject = null;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -37,7 +38,21 @@ public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 
 		if (this.desProject != null) {
 
-			InputDialog dialog = new InputDialog(getShell(), "Codename", "Type the codename", "testing", null);
+			try {
+				this.diskProject = SyncUtil.getAssociatedDiskProject(
+						this.desProject, false);
+			} catch (CoreException e) {
+				e.printStackTrace();
+				return null;
+			}
+
+			InputDialog dialog = new InputDialog(
+					getShell(),
+					"Prefix",
+					"Enter a prefix for saving the database property "
+							+ " and icon files. Letters and Numbers no spaces or "
+							+ "special Characters", "example",
+					new PropertiesPrefixInputValidator());
 
 			if (dialog.open() != Window.OK) {
 				return null;
@@ -48,7 +63,7 @@ public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 			if (StringUtil.isEmpty(prefix)) {
 				return null;
 			}
-			
+
 			IProgressMonitor monitor = new NullProgressMonitor();
 
 			saveDatabaseProperties(prefix, monitor);
@@ -57,25 +72,36 @@ public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 
 			saveDBIcon(prefix, monitor);
 
-			// WHat about Resources/Images/$DBIcon
+			saveResImgDBIcon(prefix, monitor);
+
 			/**
-			 * also check out DominoDesignerProject resetDBIcon() and resetOldDBIcon()
+			 * also check out DominoDesignerProject resetDBIcon() and
+			 * resetOldDBIcon()
 			 */
-			
+
 		}
 
 		return null;
 
 	}
 
-	private boolean saveDatabaseProperties(String prefix, IProgressMonitor monitor) {
+	private IProject getProject() {
+		if (odponly) {
+			return this.diskProject;
+		} else {
+			return this.desProject.getProject();
+		}
+	}
+
+	private boolean saveDatabaseProperties(String prefix,
+			IProgressMonitor monitor) {
 
 		String destFileName = String.format(SAVE_FILE_DBPROPS, prefix);
 
-		IFile localIfile = this.desProject.getProject().getFile(NSF_FILE_DBPROPS);
-		IFile destfile = this.desProject.getProject().getFile(destFileName);
+		IFile localIfile = getProject().getFile(NSF_FILE_DBPROPS);
+		IFile destfile = getProject().getFile(destFileName);
 
-		return saveElement(localIfile, destfile, monitor);
+		return saveElement(localIfile, destfile, monitor, true);
 
 	}
 
@@ -83,10 +109,10 @@ public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 
 		String destFileName = String.format(SAVE_FILE_ICONNOTE, prefix);
 
-		IFile localIfile = this.desProject.getProject().getFile(NSF_FILE_ICONNOTE);
-		IFile destfile = this.desProject.getProject().getFile(destFileName);
+		IFile localIfile = getProject().getFile(NSF_FILE_ICONNOTE);
+		IFile destfile = getProject().getFile(destFileName);
 
-		return saveElement(localIfile, destfile, monitor);
+		return saveElement(localIfile, destfile, monitor, true);
 
 	}
 
@@ -94,16 +120,71 @@ public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 
 		String destFileName = String.format(SAVE_FILE_DBICON, prefix);
 
-		IFile localIfile = this.desProject.getProject().getFile(NSF_FILE_DBICON);
-		IFile destfile = this.desProject.getProject().getFile(destFileName);
+		IFile localIfile = getProject().getFile(NSF_FILE_DBICON);
+		IFile destfile = getProject().getFile(destFileName);
 
-		return saveElement(localIfile, destfile, monitor);
+		return saveElement(localIfile, destfile, monitor, false);
 
 	}
 
-	private boolean saveElement(IFile localIfile, IFile destfile, IProgressMonitor monitor) {
+	private boolean saveResImgDBIcon(String prefix, IProgressMonitor monitor) {
 
-		NotesDesignElement element = DominoResourcesPlugin.getNotesDesignElement(localIfile);
+		String destFileName = String.format(SAVE_FILE_RESDBICON, prefix);
+
+		IFile localIfile = getProject().getFile(NSF_FILE_RESDBICON);
+		IFile destfile = getProject().getFile(destFileName);
+
+		return saveElement(localIfile, destfile, monitor, false);
+
+	}
+
+	private boolean simpleSave(IFile localIfile, IFile destfile,
+			IProgressMonitor monitor, boolean runFilter) {
+
+		if (!localIfile.exists()) return false;
+		
+		try {
+
+			InputStream is = localIfile.getContents();
+
+			if (destfile.exists()) {
+				destfile.setContents(is, 0, monitor);
+			} else {
+
+				if (!destfile.getParent().exists()
+						&& destfile.getParent() instanceof IFolder) {
+
+					IFolder folder = (IFolder) destfile.getParent();
+					folder.create(false, false, monitor);
+
+				}
+
+				destfile.create(is, 0, monitor);
+				
+				SyncUtil.setModifiedBySync(destfile);
+			}
+
+			if (runFilter) {
+				FilterMetadataAction.filterDiskFile(destfile, monitor);
+			}
+
+		} catch (CoreException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+
+	}
+
+	private boolean saveElement(IFile localIfile, IFile destfile,
+			IProgressMonitor monitor, boolean runFilter) {
+
+		if (odponly)
+			return simpleSave(localIfile, destfile, monitor, runFilter);
+
+		NotesDesignElement element = DominoResourcesPlugin
+				.getNotesDesignElement(localIfile);
 
 		try {
 			InputStream is = element.fetchSyncContent(0, monitor);
@@ -112,7 +193,8 @@ public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 				destfile.setContents(is, 0, monitor);
 			} else {
 
-				if (!destfile.getParent().exists() && destfile.getParent() instanceof IFolder) {
+				if (!destfile.getParent().exists()
+						&& destfile.getParent() instanceof IFolder) {
 
 					IFolder folder = (IFolder) destfile.getParent();
 					folder.create(false, false, monitor);
@@ -122,7 +204,9 @@ public class SaveDatabasePropertiesHandler extends AbstractTeamHandler {
 				destfile.create(is, 0, monitor);
 			}
 
-			FilterMetadataAction.filterDiskFile(destfile, monitor);
+			if (runFilter) {
+				FilterMetadataAction.filterDiskFile(destfile, monitor);
+			}
 
 		} catch (NsfException e) {
 			e.printStackTrace();

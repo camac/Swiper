@@ -30,6 +30,10 @@ They always have the option to 'restore' the standard settings, make changes and
 
 During Deployment, one of the steps would be to restore the appropriate database properties.
 
+Current Limitations!!!
+I Need to fix the logic, currently the restore process only works if there is the existng notes element to restore against.
+
+
 
 # Which Files to Ignore from Your Repository?
 
