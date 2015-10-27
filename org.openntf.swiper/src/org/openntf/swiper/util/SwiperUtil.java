@@ -128,6 +128,13 @@ public class SwiperUtil {
 
 		String id = mmd.getID();
 
+		if (id.equals(IMetaModelConstants.XSPCCS)) {
+
+			if (StringUtil.equals(resource.getFileExtension(),"xsp-config")) {
+				return false;
+			}			
+			
+		} 
 		if (getCanFilterIds().contains(id)) {
 
 			logInfo("Yes we can filter" + mmd.getName());
