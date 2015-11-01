@@ -23,11 +23,7 @@ public class RemoveSwiperHandler extends AbstractTeamHandler {
 		processSelectedProject(HandlerUtil.getCurrentSelection(event));
 
 		if (this.desProject != null) {
-			System.out.println("Would remove swiper from "
-					+ this.desProject.getProject().getName());
-			
-			SwiperUtil.removeNature(this.desProject.getProject());
-			
+			SwiperUtil.removeNature(this.desProject.getProject());			
 		}
 
 		return null;

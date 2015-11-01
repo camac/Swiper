@@ -22,10 +22,7 @@ public class AddSwiperHandler extends AbstractTeamHandler {
 
 		processSelectedProject(HandlerUtil.getCurrentSelection(event));
 
-		if (this.desProject != null) {
-			System.out.println("Would add swiper to "
-					+ this.desProject.getProject().getName());
-			
+		if (this.desProject != null) {		
 			SwiperUtil.addNature(this.desProject.getProject());
 		}
 		
