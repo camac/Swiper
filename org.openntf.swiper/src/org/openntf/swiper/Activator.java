@@ -15,8 +15,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.openntf.swiper.util.SwiperUtil;
 import org.osgi.framework.BundleContext;
 
-import com.ibm.designer.domino.team.util.SyncUtil;
-
 /**
  * The activator class controls the plug-in life cycle
  */
