@@ -18,12 +18,12 @@ import org.openntf.swiper.Activator;
 
 import com.bdaum.overlayPages.FieldEditorOverlayPage;
 
-public class SwiperPreferencePage extends FieldEditorOverlayPage implements
-		IWorkbenchPreferencePage {
+public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWorkbenchPreferencePage {
 
 	public static final String PAGE_ID = "org.openntf.swiper.swiperPage";
 	public static final String PREF_DEFFILTER = "defaultFilter";
 	public static final String PREF_MIMICXMLDECL = "mimicXmlDeclaration";
+	public static final String PREF_NONEWLINE = "dontAddNewLine";
 
 	public SwiperPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -43,15 +43,17 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements
 	@Override
 	protected void createFieldEditors() {
 
-		FileFieldEditor defaultFilter = new FileFieldEditor(PREF_DEFFILTER,
-				"Default XSLT Filter", getFieldEditorParent());
+		FileFieldEditor defaultFilter = new FileFieldEditor(PREF_DEFFILTER, "Default XSLT Filter",
+				getFieldEditorParent());
 		addField(defaultFilter);
 
-		BooleanFieldEditor mimcXmlDeclaration = new BooleanFieldEditor(
-				PREF_MIMICXMLDECL, "Mimic the XML Declaration From Dora",
-				getFieldEditorParent());
+		BooleanFieldEditor mimcXmlDeclaration = new BooleanFieldEditor(PREF_MIMICXMLDECL,
+				"Mimic the XML Declaration From Dora", getFieldEditorParent());
 		addField(mimcXmlDeclaration);
 
+		BooleanFieldEditor dontAddNewLine = new BooleanFieldEditor(PREF_NONEWLINE,
+				"Don't add a new line at the end of filtered content", getFieldEditorParent());
+		addField(dontAddNewLine);
 
 	}
 

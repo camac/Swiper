@@ -129,8 +129,16 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 		transformer.transform(source, result);
 
 		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
 		diskFile.setContents(bais, 0, monitor);
+
+		if (!SwiperUtil.isDontAddNewLine()) {
+			
+			// Add a New line Because that is what normally happens
+			String linesep = System.getProperty("line.separator");
+			bais = new ByteArrayInputStream(linesep.getBytes("UTF-8"));
+			diskFile.appendContents(bais, 0, monitor);
+
+		}
 
 		is.close();
 
