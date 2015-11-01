@@ -20,6 +20,7 @@ public class SwiperPreferencePage extends FieldEditorPreferencePage implements I
 
 	public static final String PREF_DEFFILTER = "defaultFilter";
 	public static final String PREF_MIMICXMLDECL = "mimicXmlDeclaration"; 
+	public static final String PREF_NONEWLINE = "dontAddNewLine"; 
 	
 	public SwiperPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -45,5 +46,8 @@ public class SwiperPreferencePage extends FieldEditorPreferencePage implements I
 				"Mimic the XML Declaration From Dora", getFieldEditorParent());
 		addField(mimcXmlDeclaration);
 
+		BooleanFieldEditor dontAddNewLine = new BooleanFieldEditor(PREF_NONEWLINE,
+				"Don't add a new line at the end of filtered content", getFieldEditorParent());
+		addField(dontAddNewLine);
 	}
 }

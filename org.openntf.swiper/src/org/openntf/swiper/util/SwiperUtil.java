@@ -162,6 +162,10 @@ public class SwiperUtil {
 	public static Boolean isMimicXmlDeclaration() {
 		return SwiperPreferenceManager.getInstance().getBooleanValue(SwiperPreferencePage.PREF_MIMICXMLDECL, false);
 	}
+	
+	public static Boolean isDontAddNewLine() {
+		return SwiperPreferenceManager.getInstance().getBooleanValue(SwiperPreferencePage.PREF_NONEWLINE, false);
+	}
 
 	public static IFile getRelevantDiskFile(IDominoDesignerProject designerProject, IResource designerFile)
 			throws CoreException {
