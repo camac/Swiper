@@ -21,10 +21,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.openntf.swiper.builder.SwiperNature;
 import org.openntf.swiper.pref.SwiperPreferenceManager;
 import org.openntf.swiper.pref.SwiperPreferencePage;
 
+import com.bdaum.overlayPages.FieldEditorOverlayPage;
 import com.ibm.commons.log.Log;
 import com.ibm.commons.log.LogMgr;
 import com.ibm.commons.util.StringUtil;
@@ -38,7 +40,8 @@ import com.ibm.designer.prj.resources.commons.IMetaModelDescriptor;
 
 public class SwiperUtil {
 
-	public static LogMgr SWIPER_LOG = Log.load("org.openntf.swiper", "Logger used for Swiper");
+	public static LogMgr SWIPER_LOG = Log.load("org.openntf.swiper",
+			"Logger used for Swiper");
 	private static final String MARKER_TYPE = "org.openntf.swiper.xmlProblem";
 
 	private static boolean filterEverything = true;
@@ -93,7 +96,8 @@ public class SwiperUtil {
 
 		logInfo("Checking preference for " + mmd.getName());
 
-		boolean isset = SwiperPreferenceManager.getInstance().getBooleanValue(prefKey, false);
+		boolean isset = SwiperPreferenceManager.getInstance().getBooleanValue(
+				prefKey, false);
 
 		if (isset) {
 			logInfo(prefKey + " is currently set to True");
@@ -106,7 +110,8 @@ public class SwiperUtil {
 
 	public static boolean shouldFilter(IResource resource) {
 
-		NotesDesignElement element = DominoResourcesPlugin.getNotesDesignElement(resource);
+		NotesDesignElement element = DominoResourcesPlugin
+				.getNotesDesignElement(resource);
 
 		if (element == null) {
 			return false;
@@ -115,9 +120,11 @@ public class SwiperUtil {
 		boolean hasMetadata = SyncUtil.hasMetadataFile(element);
 
 		if (hasMetadata) {
-			logInfo("Design Element Name: " + element.getName() + "Has Metadata");
+			logInfo("Design Element Name: " + element.getName()
+					+ "Has Metadata");
 		} else {
-			logInfo("Design Element Name: " + element.getName() + "Does not have metadata");
+			logInfo("Design Element Name: " + element.getName()
+					+ "Does not have metadata");
 		}
 
 		IMetaModelDescriptor mmd = element.getMetaModel();
@@ -130,11 +137,11 @@ public class SwiperUtil {
 
 		if (id.equals(IMetaModelConstants.XSPCCS)) {
 
-			if (StringUtil.equals(resource.getFileExtension(),"xsp-config")) {
+			if (StringUtil.equals(resource.getFileExtension(), "xsp-config")) {
 				return false;
-			}			
-			
-		} 
+			}
+
+		}
 		if (getCanFilterIds().contains(id)) {
 
 			logInfo("Yes we can filter" + mmd.getName());
@@ -152,36 +159,59 @@ public class SwiperUtil {
 
 	public static boolean isUseDefaultFilter() {
 		String key = getPreferenceKey("useDefaultFilter");
-		return SwiperPreferenceManager.getInstance().getBooleanValue(key, false);
+		return SwiperPreferenceManager.getInstance()
+				.getBooleanValue(key, false);
 	}
 
 	public static String getDefaultFilterFilePath() {
-		return SwiperPreferenceManager.getInstance().getValue(SwiperPreferencePage.PREF_DEFFILTER, false);
+		return SwiperPreferenceManager.getInstance().getValue(
+				SwiperPreferencePage.PREF_DEFFILTER, false);
 	}
 
 	public static Boolean isMimicXmlDeclaration() {
-		return SwiperPreferenceManager.getInstance().getBooleanValue(SwiperPreferencePage.PREF_MIMICXMLDECL, false);
+		return SwiperPreferenceManager.getInstance().getBooleanValue(
+				SwiperPreferencePage.PREF_MIMICXMLDECL, false);
 	}
 
-	public static IFile getRelevantDiskFile(IDominoDesignerProject designerProject, IResource designerFile)
+	public static Boolean isMimicXmlDeclaration(IResource resource) {
+
+		IPreferenceStore store = SwiperPreferenceManager.getInstance()
+				.getPreferenceStore();
+		String pageId = SwiperPreferencePage.PAGE_ID;
+
+		String stringValue = getOverlayedPreferenceValue(store, resource,
+				pageId, SwiperPreferencePage.PREF_MIMICXMLDECL);
+
+		return StringUtil
+				.equalsIgnoreCase(Boolean.TRUE.toString(), stringValue);
+
+	}
+
+	public static IFile getRelevantDiskFile(
+			IDominoDesignerProject designerProject, IResource designerFile)
 			throws CoreException {
 
-		NotesDesignElement designElement = DominoResourcesPlugin.getNotesDesignElement(designerFile);
+		NotesDesignElement designElement = DominoResourcesPlugin
+				.getNotesDesignElement(designerFile);
 
-		IProject diskProject = SyncUtil.getAssociatedDiskProject(designerProject, false);
+		IProject diskProject = SyncUtil.getAssociatedDiskProject(
+				designerProject, false);
 
 		IFile diskFile = null;
 
 		if (SyncUtil.hasMetadataFile(designElement)) {
 
-			SwiperUtil.logInfo("Metadata file needed " + designerFile.getName());
+			SwiperUtil
+					.logInfo("Metadata file needed " + designerFile.getName());
 
-			IPath localPath = designerFile.getProjectRelativePath().addFileExtension("metadata");
+			IPath localPath = designerFile.getProjectRelativePath()
+					.addFileExtension("metadata");
 			diskFile = diskProject.getFile(localPath);
 
 		} else {
 
-			SwiperUtil.logInfo("No Metadata file needed for " + designerFile.getName());
+			SwiperUtil.logInfo("No Metadata file needed for "
+					+ designerFile.getName());
 			diskFile = SyncUtil.getPhysicalFile(designerProject, designerFile);
 
 		}
@@ -190,9 +220,11 @@ public class SwiperUtil {
 
 	}
 
-	public static QualifiedName getSyncModifiedQualifiedName(IResource paramIResource) {
-		QualifiedName localQualifiedName = new QualifiedName("org.openntf.swiper",
-				paramIResource.getProjectRelativePath().toString());
+	public static QualifiedName getSyncModifiedQualifiedName(
+			IResource paramIResource) {
+		QualifiedName localQualifiedName = new QualifiedName(
+				"org.openntf.swiper", paramIResource.getProjectRelativePath()
+						.toString());
 		return localQualifiedName;
 
 	}
@@ -226,9 +258,11 @@ public class SwiperUtil {
 		return false;
 	}
 
-	public static String getPersistentSyncTimestamp(IResource paramIResource) throws CoreException {
+	public static String getPersistentSyncTimestamp(IResource paramIResource)
+			throws CoreException {
 		QualifiedName localQualifiedName = getSyncModifiedQualifiedName(paramIResource);
-		return paramIResource.getProject().getPersistentProperty(localQualifiedName);
+		return paramIResource.getProject().getPersistentProperty(
+				localQualifiedName);
 	}
 
 	public static void setSyncTimestamp(IResource paramIResource) {
@@ -243,7 +277,8 @@ public class SwiperUtil {
 			if (paramIResource.exists()) {
 				long l = paramIResource.getLocalTimeStamp();
 				QualifiedName localQualifiedName = getSyncModifiedQualifiedName(paramIResource);
-				paramIResource.getProject().setPersistentProperty(localQualifiedName, String.valueOf(l));
+				paramIResource.getProject().setPersistentProperty(
+						localQualifiedName, String.valueOf(l));
 			}
 		} catch (CoreException localCoreException) {
 			localCoreException.printStackTrace();
@@ -253,13 +288,19 @@ public class SwiperUtil {
 
 	public static void logInfo(String message) {
 		if (SWIPER_LOG.isInfoEnabled()) {
-			SWIPER_LOG.infop("SwiperUtil", "", "Swiper: " + message, new Object[0]);
+			SWIPER_LOG.infop("SwiperUtil", "", "Swiper: " + message,
+					new Object[0]);
 		}
 	}
+	
+	public static void logTrace(String message) {
+		SWIPER_LOG.traceDebug("Swiper: " + message);
+	}
+	
 
 	public static void addNature(IProject project) {
 
-		SwiperUtil.logInfo("Attempt to Add Nature");
+		SwiperUtil.logTrace("Attempt to Add Nature");
 
 		try {
 			IProjectDescription description = project.getDescription();
@@ -280,6 +321,8 @@ public class SwiperUtil {
 			description.setNatureIds(newNatures);
 			project.setDescription(description, null);
 
+			logInfo("Added Swiper Nature to " + project.getName());
+			
 		} catch (CoreException e) {
 
 			SwiperUtil.logInfo(e.getMessage());
@@ -296,7 +339,7 @@ public class SwiperUtil {
 
 	public static void removeNature(IProject project) {
 
-		SwiperUtil.logInfo("Attempt to Remove Nature");
+		SwiperUtil.logTrace("Attempt to Remove Nature");
 
 		try {
 			IProjectDescription description = project.getDescription();
@@ -307,9 +350,13 @@ public class SwiperUtil {
 					// Remove the nature
 					String[] newNatures = new String[natures.length - 1];
 					System.arraycopy(natures, 0, newNatures, 0, i);
-					System.arraycopy(natures, i + 1, newNatures, i, natures.length - i - 1);
+					System.arraycopy(natures, i + 1, newNatures, i,
+							natures.length - i - 1);
 					description.setNatureIds(newNatures);
 					project.setDescription(description, null);
+					
+					logInfo("Removed Swiper Nature from " + project.getName());
+					
 					return;
 				}
 			}
@@ -339,7 +386,8 @@ public class SwiperUtil {
 
 	}
 
-	public static void addMarker(IResource resource, String message, int severity) {
+	public static void addMarker(IResource resource, String message,
+			int severity) {
 
 		try {
 			IMarker marker = resource.createMarker(MARKER_TYPE);
@@ -363,7 +411,8 @@ public class SwiperUtil {
 
 	}
 
-	public static void addMarker(IFile file, String message, int lineNumber, int severity) {
+	public static void addMarker(IFile file, String message, int lineNumber,
+			int severity) {
 		try {
 			IMarker marker = file.createMarker(MARKER_TYPE);
 			marker.setAttribute(IMarker.MESSAGE, message);
@@ -390,7 +439,41 @@ public class SwiperUtil {
 	}
 
 	public static boolean isAutoExportEnabled() {
-		return DominoPreferenceManager.getInstance().getBooleanValue("domino.prefs.keys.team.export.auto", false);
+		return DominoPreferenceManager.getInstance().getBooleanValue(
+				"domino.prefs.keys.team.export.auto", false);
+	}
+
+	public static String getOverlayedPreferenceValue(IPreferenceStore store,
+			IResource resource, String pageId, String name) {
+
+		IProject project = resource.getProject();
+		String value = null;
+		if (useProjectSettings(project, pageId)) {
+			value = getProperty(resource, pageId, name);
+		}
+		if (value != null)
+			return value;
+		return store.getString(name);
+
+	}
+
+	private static boolean useProjectSettings(IResource resource, String pageId) {
+		String use = getProperty(resource, pageId,
+				FieldEditorOverlayPage.USEPROJECTSETTINGS);
+		return "true".equals(use);
+	}
+
+	private static String getProperty(IResource resource, String pageId,
+			String key) {
+
+		try {
+			return resource
+					.getPersistentProperty(new QualifiedName(pageId, key));
+		} catch (CoreException e) {
+
+		}
+		return null;
+
 	}
 
 }

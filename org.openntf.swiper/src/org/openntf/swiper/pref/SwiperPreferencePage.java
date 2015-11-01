@@ -16,34 +16,47 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.openntf.swiper.Activator;
 
-public class SwiperPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+import com.bdaum.overlayPages.FieldEditorOverlayPage;
 
+public class SwiperPreferencePage extends FieldEditorOverlayPage implements
+		IWorkbenchPreferencePage {
+
+	public static final String PAGE_ID = "org.openntf.swiper.swiperPage";
 	public static final String PREF_DEFFILTER = "defaultFilter";
-	public static final String PREF_MIMICXMLDECL = "mimicXmlDeclaration"; 
-	
+	public static final String PREF_MIMICXMLDECL = "mimicXmlDeclaration";
+
 	public SwiperPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
 	}
 
 	@Override
-	public void init(IWorkbench workbench) {
-
+	protected IPreferenceStore doGetPreferenceStore() {
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		setPreferenceStore(store);
-		setDescription("Swiper Preferences");
+		return store;
+	}
 
+	@Override
+	public void init(IWorkbench workbench) {
+		setDescription("Swiper Preferences");
 	}
 
 	@Override
 	protected void createFieldEditors() {
 
-		FileFieldEditor defaultFilter = new FileFieldEditor(PREF_DEFFILTER, "Default XSLT Filter",
-				getFieldEditorParent());
+		FileFieldEditor defaultFilter = new FileFieldEditor(PREF_DEFFILTER,
+				"Default XSLT Filter", getFieldEditorParent());
 		addField(defaultFilter);
 
-		BooleanFieldEditor mimcXmlDeclaration = new BooleanFieldEditor(PREF_MIMICXMLDECL,
-				"Mimic the XML Declaration From Dora", getFieldEditorParent());
+		BooleanFieldEditor mimcXmlDeclaration = new BooleanFieldEditor(
+				PREF_MIMICXMLDECL, "Mimic the XML Declaration From Dora",
+				getFieldEditorParent());
 		addField(mimcXmlDeclaration);
 
+
+	}
+
+	@Override
+	protected String getPageId() {
+		return PAGE_ID;
 	}
 }
