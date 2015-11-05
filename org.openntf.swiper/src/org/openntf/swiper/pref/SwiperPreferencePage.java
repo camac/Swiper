@@ -23,7 +23,7 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 	public static final String PAGE_ID = "org.openntf.swiper.swiperPage";
 	public static final String PREF_CUST_FILTER = "customFilter";
 	public static final String PREF_MIMICXMLDECL = "mimicXmlDeclaration";
-	public static final String PREF_NONEWLINE = "dontAddNewLine";
+	public static final String PREF_MIMIC_DXLEXPORT_EOF = "mimicDxlExportEof";
 
 	public SwiperPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -47,15 +47,15 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 		FileFieldEditor defaultFilter = new FileFieldEditor(PREF_CUST_FILTER, "Custom XSLT Filter",
 				getFieldEditorParent());	
 		addField(defaultFilter);
-
+		
 		BooleanFieldEditor mimcXmlDeclaration = new BooleanFieldEditor(PREF_MIMICXMLDECL,
-				"Mimic the XML Declaration From Dora", getFieldEditorParent());
+				"Mimic Dora XML Declaration (no 'encoding=UTF-8')", getFieldEditorParent());
 		addField(mimcXmlDeclaration);
 
-		BooleanFieldEditor dontAddNewLine = new BooleanFieldEditor(PREF_NONEWLINE,
-				"Don't add a new line at the end of filtered content", getFieldEditorParent());
+		BooleanFieldEditor dontAddNewLine = new BooleanFieldEditor(PREF_MIMIC_DXLEXPORT_EOF,
+				"Mimic EOF of DXL Export (Add extra Line Endings to end of file)", getFieldEditorParent());
 		addField(dontAddNewLine);
-
+		
 	}
 
 	@Override

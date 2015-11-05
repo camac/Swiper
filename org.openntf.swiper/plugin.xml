@@ -88,6 +88,11 @@
                   mode="FORCE_TEXT"
                   style="push">
             </command>
+            <command
+                  commandId="org.openntf.swiper.commands.filterMetadata"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
       <menuContribution
@@ -117,6 +122,10 @@
       <command
             id="org.openntf.swiper.commands.removeswiper"
             name="Remove Swiper">
+      </command>
+      <command
+            id="org.openntf.swiper.commands.filterMetadata"
+            name="Filter Selected">
       </command>
    </extension>
    <extension
@@ -157,6 +166,26 @@
                      
          </enabledWhen>
             
+      </handler>
+      <handler
+            class="org.openntf.swiper.action.FilterMetadataAction"
+            commandId="org.openntf.swiper.commands.filterMetadata">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <test
+                           property="org.eclipse.core.resources.projectNature"
+                           value="org.openntf.swiper.swiperNature">
+                     </test>
+                  </adapt>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
    <extension
