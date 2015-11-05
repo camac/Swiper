@@ -10,6 +10,8 @@ package org.openntf.swiper.util;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -44,6 +46,8 @@ public class SwiperUtil {
 	public static LogMgr SWIPER_LOG = Log.load("org.openntf.swiper", "Logger used for Swiper");
 	private static final String MARKER_TYPE = "org.openntf.swiper.xmlProblem";
 
+	private static boolean loggingToFile = false;
+	
 	private static boolean filterEverything = true;
 
 	public static Set<String> getCanFilterIds() {
@@ -284,6 +288,36 @@ public class SwiperUtil {
 
 	}
 
+	public static boolean isLoggingToFile() {
+		return loggingToFile;
+	}
+	
+	public static void startLoggingToFile() {
+
+		logInfo("Starting Logging to File");
+		
+		Handler handler = SwiperActivator.getDefault().getFileHandler();		
+		SWIPER_LOG.getLogger().addHandler(handler);
+		SWIPER_LOG.getLogger().setLevel(Level.ALL);
+		loggingToFile = true;
+			
+	}
+	
+	public static void stopLoggingToFile() {
+
+		logInfo("Stopping Logging to File");
+		
+		Handler handler = SwiperActivator.getDefault().getFileHandler();		
+		SWIPER_LOG.getLogger().removeHandler(handler);
+		SWIPER_LOG.getLogger().setLevel(Level.INFO);
+		
+		loggingToFile = false;
+
+		SwiperActivator.getDefault().closeFileHandler();
+
+		
+	}
+	
 	public static void logInfo(String message) {
 		if (SWIPER_LOG.isInfoEnabled()) {
 			SWIPER_LOG.infop("SwiperUtil", "", "Swiper: " + message, new Object[0]);

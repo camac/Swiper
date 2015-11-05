@@ -110,6 +110,20 @@
                   mode="FORCE_TEXT"
                   style="push">
             </command>
+            <separator
+                  name="org.openntf.swiper.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.openntf.swiper.commands.startLogging"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.openntf.swiper.commands.stopLogging"
+                  mode="FORCE_TEXT"
+                  style="push">
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -126,6 +140,14 @@
       <command
             id="org.openntf.swiper.commands.filterMetadata"
             name="Filter Selected">
+      </command>
+      <command
+            id="org.openntf.swiper.commands.stopLogging"
+            name="Stop Logging">
+      </command>
+      <command
+            id="org.openntf.swiper.commands.startLogging"
+            name="Start Logging">
       </command>
    </extension>
    <extension
@@ -186,6 +208,14 @@
                </iterate>
             </with>
          </enabledWhen>
+      </handler>
+      <handler
+            class="org.openntf.swiper.handlers.StartLoggingHandler"
+            commandId="org.openntf.swiper.commands.startLogging">
+      </handler>
+      <handler
+            class="org.openntf.swiper.handlers.StopLoggingHandler"
+            commandId="org.openntf.swiper.commands.stopLogging">
       </handler>
    </extension>
    <extension

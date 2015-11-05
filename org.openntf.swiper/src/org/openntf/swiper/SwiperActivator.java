@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.openntf.swiper;
 
+import java.io.IOException;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -55,6 +57,11 @@ public class SwiperActivator extends AbstractUIPlugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
+		
+		if (this.logHandler != null) {
+			this.logHandler.close();
+		}
+		
 		super.stop(context);
 	}
 
@@ -77,4 +84,34 @@ public class SwiperActivator extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
+	
+	
+	public FileHandler getFileHandler() {
+
+		if (this.logHandler == null) {
+		
+			try {
+
+				boolean success = new java.io.File(System.getProperty("user.home"), ".swiper").mkdirs();			
+				this.logHandler = new FileHandler("%h/.swiper/swiper-log.%u.%g.xml", 1024 * 1024, 10, false);
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+			
+		}
+		
+		return this.logHandler;
+	}
+	
+	public void closeFileHandler() {
+		
+		if (this.logHandler != null) {
+			this.logHandler.close();
+			this.logHandler = null;
+		}
+		
+	}
+	
 }
