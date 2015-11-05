@@ -18,18 +18,20 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin {
+public class SwiperActivator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.openntf.swiper"; //$NON-NLS-1$
 
 	// The shared instance
-	private static Activator plugin;
+	private static SwiperActivator plugin;
+	
+	private FileHandler logHandler = null;
 	
 	/**
 	 * The constructor
 	 */
-	public Activator() {
+	public SwiperActivator() {
 	}
 
 	/*
@@ -61,7 +63,7 @@ public class Activator extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static SwiperActivator getDefault() {
 		return plugin;
 	}
 

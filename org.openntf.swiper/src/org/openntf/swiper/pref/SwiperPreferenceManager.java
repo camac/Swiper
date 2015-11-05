@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
-import org.openntf.swiper.Activator;
+import org.openntf.swiper.SwiperActivator;
 
 import com.ibm.commons.util.StringUtil;
 
@@ -32,7 +32,7 @@ public class SwiperPreferenceManager extends PreferenceManager {
 	}
 
 	protected SwiperPreferenceManager() {
-		this.store = Activator.getDefault().getPreferenceStore();
+		this.store = SwiperActivator.getDefault().getPreferenceStore();
 	}
 
 	public IPreferenceStore getPreferenceStore() {

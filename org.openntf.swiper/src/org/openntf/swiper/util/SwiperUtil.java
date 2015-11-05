@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.openntf.swiper.SwiperActivator;
 import org.openntf.swiper.builder.SwiperNature;
 import org.openntf.swiper.pref.SwiperPreferenceManager;
 import org.openntf.swiper.pref.SwiperPreferencePage;

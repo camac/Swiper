@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenNTF Swiper Plugin
 Bundle-SymbolicName: org.openntf.swiper;singleton:=true
 Bundle-Version: 0.1.0.qualifier
-Bundle-Activator: org.openntf.swiper.Activator
+Bundle-Activator: org.openntf.swiper.SwiperActivator
 Bundle-Vendor: OpenNTF
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

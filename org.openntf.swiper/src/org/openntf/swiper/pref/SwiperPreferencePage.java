@@ -14,7 +14,7 @@ import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.openntf.swiper.Activator;
+import org.openntf.swiper.SwiperActivator;
 
 import com.bdaum.overlayPages.FieldEditorOverlayPage;
 
@@ -31,7 +31,7 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 
 	@Override
 	protected IPreferenceStore doGetPreferenceStore() {
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+		IPreferenceStore store = SwiperActivator.getDefault().getPreferenceStore();
 		return store;
 	}
 
