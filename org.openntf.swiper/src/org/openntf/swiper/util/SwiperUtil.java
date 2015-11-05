@@ -157,15 +157,17 @@ public class SwiperUtil {
 
 	}
 
-	public static boolean isUseDefaultFilter() {
-		String key = getPreferenceKey("useDefaultFilter");
-		return SwiperPreferenceManager.getInstance()
-				.getBooleanValue(key, false);
+	public static String getCustomFilterFilePath() {
+		return SwiperPreferenceManager.getInstance().getValue(SwiperPreferencePage.PREF_CUST_FILTER, false);
 	}
 
-	public static String getDefaultFilterFilePath() {
-		return SwiperPreferenceManager.getInstance().getValue(
-				SwiperPreferencePage.PREF_DEFFILTER, false);
+	public static String getCustomFilterFilePath(IResource resource) {
+
+		IPreferenceStore store = SwiperPreferenceManager.getInstance().getPreferenceStore();
+		String pageId = SwiperPreferencePage.PAGE_ID;
+
+		return getOverlayedPreferenceValue(store, resource, pageId, SwiperPreferencePage.PREF_CUST_FILTER);
+
 	}
 
 	public static Boolean isMimicXmlDeclaration() {

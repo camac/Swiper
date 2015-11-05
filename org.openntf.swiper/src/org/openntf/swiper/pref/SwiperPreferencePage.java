@@ -21,7 +21,7 @@ import com.bdaum.overlayPages.FieldEditorOverlayPage;
 public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWorkbenchPreferencePage {
 
 	public static final String PAGE_ID = "org.openntf.swiper.swiperPage";
-	public static final String PREF_DEFFILTER = "defaultFilter";
+	public static final String PREF_CUST_FILTER = "customFilter";
 	public static final String PREF_MIMICXMLDECL = "mimicXmlDeclaration";
 	public static final String PREF_NONEWLINE = "dontAddNewLine";
 
@@ -43,8 +43,9 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 	@Override
 	protected void createFieldEditors() {
 
-		FileFieldEditor defaultFilter = new FileFieldEditor(PREF_DEFFILTER, "Default XSLT Filter",
-				getFieldEditorParent());
+		
+		FileFieldEditor defaultFilter = new FileFieldEditor(PREF_CUST_FILTER, "Custom XSLT Filter",
+				getFieldEditorParent());	
 		addField(defaultFilter);
 
 		BooleanFieldEditor mimcXmlDeclaration = new BooleanFieldEditor(PREF_MIMICXMLDECL,
