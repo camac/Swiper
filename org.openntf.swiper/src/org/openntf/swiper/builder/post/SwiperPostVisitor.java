@@ -49,16 +49,16 @@ public class SwiperPostVisitor implements IResourceDeltaVisitor {
 
 			if (SwiperUtil.isModifiedBySync(diskFile)) {
 
-				SwiperUtil.logInfo(diskFile.getName() + " was modified by sync - Filter It");
+				SwiperUtil.logTrace(diskFile.getName() + " was modified by sync - Filter It");
 
 				if (SwiperUtil.shouldFilter(designerFile)) {
 					builder.filterDiskFile(designerFile, diskFile, monitor);
 				} else {
-					SwiperUtil.logInfo("Not Configured to filter " + designerFile.getName());
+					SwiperUtil.logTrace("Not Configured to filter " + designerFile.getName());
 				}
 
 			} else {
-				SwiperUtil.logInfo(diskFile.getName() + " untouched");
+				SwiperUtil.logTrace(diskFile.getName() + " untouched");
 			}
 
 		}
@@ -67,7 +67,7 @@ public class SwiperPostVisitor implements IResourceDeltaVisitor {
 	private boolean processAdded(IResourceDelta delta) {
 		try {
 
-			SwiperUtil.logInfo("Processing Added");
+			SwiperUtil.logTrace("Processing Added");
 
 			if ((delta.getResource() instanceof IFolder)) {
 				IFolder folder = (IFolder) delta.getResource();
@@ -91,7 +91,7 @@ public class SwiperPostVisitor implements IResourceDeltaVisitor {
 
 	private boolean processChanged(IResourceDelta delta) {
 
-		SwiperUtil.logInfo("Processing Changed");
+		SwiperUtil.logTrace("Processing Changed");
 
 		try {
 
@@ -118,7 +118,7 @@ public class SwiperPostVisitor implements IResourceDeltaVisitor {
 	@Override
 	public boolean visit(IResourceDelta delta) throws CoreException {
 
-		SwiperUtil.logInfo("Visiting: " + delta.getResource().getName());
+		SwiperUtil.logTrace("Visiting: " + delta.getResource().getName());
 
 		switch (delta.getKind()) {
 		case IResourceDelta.ADDED:

@@ -70,7 +70,7 @@ public class SwiperPreSyncBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 
-		SwiperUtil.logInfo("Swiper: PreSyncBuilder");
+		SwiperUtil.logTrace("Swiper: PreSyncBuilder");
 
 		try {
 			this.designerProject = DominoResourcesPlugin

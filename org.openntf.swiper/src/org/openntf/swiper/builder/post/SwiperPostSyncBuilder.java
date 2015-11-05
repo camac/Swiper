@@ -71,8 +71,10 @@ public class SwiperPostSyncBuilder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor)
 			throws CoreException {
 
-		SwiperUtil.logInfo("Swiper: PostSyncBuilder");
+		SwiperUtil.logTrace("Swiper: PostSyncBuilder");
 
+		SwiperUtil.logInfo("**** Running Post Sync Builder");
+		
 		try {
 			this.designerProject = DominoResourcesPlugin
 					.getDominoDesignerProject(getProject());

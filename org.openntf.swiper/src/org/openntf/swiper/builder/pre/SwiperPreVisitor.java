@@ -36,7 +36,7 @@ public class SwiperPreVisitor implements IResourceDeltaVisitor {
 
 	private boolean processAdded(IResourceDelta delta) throws CoreException {
 
-		SwiperUtil.logInfo("Processing Added");
+		SwiperUtil.logTrace("Processing Added");
 
 		/*
 		 * If the physical file is not found, then save the current timestamp
@@ -68,7 +68,7 @@ public class SwiperPreVisitor implements IResourceDeltaVisitor {
 
 	private boolean processChanged(IResourceDelta delta) throws CoreException {
 
-		SwiperUtil.logInfo("Processing Changed");
+		SwiperUtil.logTrace("Processing Changed");
 
 		if ((delta.getResource() instanceof IFolder)) {
 
@@ -105,7 +105,7 @@ public class SwiperPreVisitor implements IResourceDeltaVisitor {
 	@Override
 	public boolean visit(IResourceDelta delta) throws CoreException {
 
-		SwiperUtil.logInfo("Visiting: " + delta.getResource().getName());
+		SwiperUtil.logTrace("Visiting: " + delta.getResource().getName());
 
 		switch (delta.getKind()) {
 		case IResourceDelta.ADDED:

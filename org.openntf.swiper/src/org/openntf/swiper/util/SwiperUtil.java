@@ -94,15 +94,13 @@ public class SwiperUtil {
 
 		String prefKey = getPreferenceKey(mmd);
 
-		logInfo("Checking preference for " + mmd.getName());
-
-		boolean isset = SwiperPreferenceManager.getInstance().getBooleanValue(
-				prefKey, false);
+		boolean isset = SwiperPreferenceManager.getInstance()
+				.getBooleanValue(prefKey, false);
 
 		if (isset) {
-			logInfo(prefKey + " is currently set to True");
+			logTrace(prefKey + " is currently set to True");
 		} else {
-			logInfo(prefKey + " is currently set to False");
+			logTrace(prefKey + " is currently set to False");
 		}
 
 		return isset;
@@ -120,10 +118,10 @@ public class SwiperUtil {
 		boolean hasMetadata = SyncUtil.hasMetadataFile(element);
 
 		if (hasMetadata) {
-			logInfo("Design Element Name: " + element.getName()
+			logTrace("Design Element Name: " + element.getName()
 					+ "Has Metadata");
 		} else {
-			logInfo("Design Element Name: " + element.getName()
+			logTrace("Design Element Name: " + element.getName()
 					+ "Does not have metadata");
 		}
 
@@ -144,13 +142,13 @@ public class SwiperUtil {
 		}
 		if (getCanFilterIds().contains(id)) {
 
-			logInfo("Yes we can filter" + mmd.getName());
+			logTrace("Yes we can filter" + mmd.getName());
 
 			return isSetToFilter(mmd);
 
 		} else {
 
-			logInfo("No we don't filter" + mmd.getName() + " (" + id + ")");
+			logTrace("No we don't filter" + mmd.getName() + " (" + id + ")");
 			return false;
 
 		}
@@ -208,7 +206,7 @@ public class SwiperUtil {
 		if (SyncUtil.hasMetadataFile(designElement)) {
 
 			SwiperUtil
-					.logInfo("Metadata file needed " + designerFile.getName());
+					.logTrace("Metadata file needed " + designerFile.getName());
 
 			IPath localPath = designerFile.getProjectRelativePath()
 					.addFileExtension("metadata");
@@ -299,10 +297,19 @@ public class SwiperUtil {
 		}
 	}
 	
+	public static void logInfo(String message, Object... args) {
+		if (SWIPER_LOG.isInfoEnabled()) {
+			SWIPER_LOG.infop("SwiperUtil", "", "Swiper: " + message, args);
+		}
+	}
+
 	public static void logTrace(String message) {
 		SWIPER_LOG.traceDebug("Swiper: " + message);
 	}
 	
+	public static void logError(String message) {
+		SWIPER_LOG.error(message);
+	}
 
 	public static void addNature(IProject project) {
 
@@ -331,12 +338,12 @@ public class SwiperUtil {
 			
 		} catch (CoreException e) {
 
-			SwiperUtil.logInfo(e.getMessage());
+			SwiperUtil.logError(e.getMessage());
 			e.printStackTrace();
 
 		} catch (Exception e) {
 
-			SwiperUtil.logInfo(e.getMessage());
+			SwiperUtil.logError(e.getMessage());
 			e.printStackTrace();
 
 		}
