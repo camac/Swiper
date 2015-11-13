@@ -10,7 +10,7 @@
 <feature
       id="org.openntf.swiper.feature"
       label="OpenNTF Swiper Feature"
-      version="0.1.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="OpenNTF">
 
    <description url="http://www.openntf.org/main.nsf/project.xsp?r=project/Swiper">
