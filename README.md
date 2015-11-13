@@ -56,6 +56,9 @@ Please note that this right-click menu does not work from the main list of desig
 
 ## Notes for Projects that previously used Dora
 
+Dora should be uninstalled from the git repo before using swiper.
+To do run dora from the git Terminal, and then choose uninstall dxl filter.
+
 The default filter supplied with swiper is slightly different, and also the code library for filtering the XML is different. As such there is some minor differences in the output of the filtered metadata. If you encounter these 'changes' you can commit them and you should not be prompted again.
 
 1. Inclusion of 'encoding' attribute on root element
