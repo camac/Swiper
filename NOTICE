@@ -4,3 +4,15 @@ Copyright 2015 Cameron Gregor
 This product includes software developed for
 OpenNTF – (http://www.OpenNTF.org/)
 Licensed under Apache
+
+
+-------
+This project includes the FieldEditorOverlayPage technique described in the following article
+https://eclipse.org/articles/Article-Mutatis-mutandis/overlay-pages.html
+Copyright (c) 2003 Berthold Daum.
+
+The necessary code to use this technique is supplied on the above page and has been included in this project under the package com.bdaum.overlayPages
+
+It is made available under the Common Public License v1.0
+http://www.eclipse.org/legal/cpl-v10.html
+
