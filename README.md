@@ -15,14 +15,21 @@ Swiper is installed to Domino Designer via the plugin installation mechanism
 
 Note: You do not need to install Swiper on the server. It is used at Design-Time only so it is only required to be installed to Domino Designer.
 
-If you have never installed plugins to Designer, you may need to enabled 'Eclipse plugin install' in your preferences.
+If you have never installed plugins to Designer, you may need to enabled 'Eclipse plugin install' in your Domino Designer preferences. 
+This can be found under 'File -> Preferences' then 'Domino Designer' category. Then in the 'General' group there is a checkbox
 
 Once this is enabled you should see the:
 File -> Applications -> Install
 
-Option
-
 Choose Search for new features to install
+Choose 'Add Folder Location' and point to the updatesite folder within the release of Swiper (make sure you unzipped the swiper release zip first)
+
+Click 'Finish'
+Select the Swiper Feature (Expand the Swiper category to find it)
+Accept the licence
+Click ok to install
+Restart Designer
+
 
 ## Usage
 
