@@ -55,11 +55,15 @@ public class SwiperUtil {
 		HashSet<String> things = new HashSet<String>();
 
 		things.add(IMetaModelConstants.AGENTS);
+		things.add(IMetaModelConstants.WEBSERVICES);
 		things.add(IMetaModelConstants.SHARED_ELEMENTS);
 		things.add(IMetaModelConstants.DATACONNS);
+		things.add(IMetaModelConstants.DAVS);
 		things.add(IMetaModelConstants.FOLDERS);
 		things.add(IMetaModelConstants.FIELDS);
+		things.add(IMetaModelConstants.COLUMNS);
 		things.add(IMetaModelConstants.FRAMESET);
+		things.add(IMetaModelConstants.JAVAFILE);
 		things.add(IMetaModelConstants.JAVAJARS);
 		things.add(IMetaModelConstants.DBSCRIPT);
 		// Metadata
@@ -72,6 +76,12 @@ public class SwiperUtil {
 		things.add(IMetaModelConstants.VIEWS);
 		things.add(IMetaModelConstants.FORMS);
 
+		things.add(IMetaModelConstants.IMAGES);
+		things.add(IMetaModelConstants.FILES);
+
+		things.add(IMetaModelConstants.APPLETS);
+		things.add(IMetaModelConstants.STYLESHEETS);
+		
 		things.add(IMetaModelConstants.ABOUTDOC);
 		things.add(IMetaModelConstants.DBPROPS);
 		things.add(IMetaModelConstants.ICONNOTE);
@@ -79,7 +89,13 @@ public class SwiperUtil {
 		things.add(IMetaModelConstants.USINGDOC);
 
 		things.add(IMetaModelConstants.SCRIPTLIB);
+		
+		things.add(IMetaModelConstants.STYLEKITS);
 
+		things.add(IMetaModelConstants.WIRINGPROPS);
+		things.add(IMetaModelConstants.APPS);
+		things.add(IMetaModelConstants.COMPONENTS);
+		
 		return things;
 	}
 
