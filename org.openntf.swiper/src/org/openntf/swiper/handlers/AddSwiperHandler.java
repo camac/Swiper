@@ -10,10 +10,12 @@ package org.openntf.swiper.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.openntf.swiper.util.SwiperUtil;
 
 import com.ibm.designer.domino.team.action.AbstractTeamHandler;
+import com.ibm.designer.domino.team.util.SyncUtil;
 
 public class AddSwiperHandler extends AbstractTeamHandler {
 
@@ -23,7 +25,20 @@ public class AddSwiperHandler extends AbstractTeamHandler {
 		processSelectedProject(HandlerUtil.getCurrentSelection(event));
 
 		if (this.desProject != null) {		
-			SwiperUtil.addNature(this.desProject.getProject());
+			
+			if (!SyncUtil.isConfiguredForSourceControl(desProject)) {
+				
+				String title = "Configure Project for Source Control";
+				String message = "You must configure the project for Source Control control before adding swiper";
+				
+				MessageDialog.openInformation(getShell(), title, message);
+				
+				return null;
+				
+			}
+			
+			SwiperUtil.addNature(this.desProject.getProject());				
+			
 		}
 		
 		return null;
