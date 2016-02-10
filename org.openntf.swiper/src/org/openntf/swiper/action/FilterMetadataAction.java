@@ -181,7 +181,7 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 		is.close();
 
-		SyncUtil.setModifiedBySync(diskFile);
+		//SyncUtil.setModifiedBySync(diskFile);
 
 	}
 

@@ -23,5 +23,11 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.swiper,
- org.openntf.swiper.builder
+ org.openntf.swiper.action,
+ org.openntf.swiper.builder,
+ org.openntf.swiper.builder.post,
+ org.openntf.swiper.builder.pre,
+ org.openntf.swiper.handlers,
+ org.openntf.swiper.pref,
+ org.openntf.swiper.util
 Import-Package: com.ibm.commons.util

@@ -240,6 +240,12 @@
          </enabledWhen>
       </page>
    </extension>
+   <extension
+         point="com.ibm.designer.domino.team.synclistener">
+      <syncListener
+            class="org.openntf.swiper.builder.SwiperSyncListener">
+      </syncListener>
+   </extension>
 
 
 </plugin>

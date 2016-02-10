@@ -40,8 +40,8 @@ public class SwiperNature implements IProjectNature {
 	public void configure() throws CoreException {
 
 
-		addBuilderToProject(project, SwiperPreSyncBuilder.BUILDER_ID, NsfToPhysicalSynBuilder.SYNC_BUILDER, true);
-		addBuilderToProject(project, SwiperPostSyncBuilder.BUILDER_ID, NsfToPhysicalSynBuilder.SYNC_BUILDER, false);
+		//addBuilderToProject(project, SwiperPreSyncBuilder.BUILDER_ID, NsfToPhysicalSynBuilder.SYNC_BUILDER, true);
+		//addBuilderToProject(project, SwiperPostSyncBuilder.BUILDER_ID, NsfToPhysicalSynBuilder.SYNC_BUILDER, false);
 			
 	}
 
