@@ -156,6 +156,24 @@ public class SwiperUtil {
 			}
 
 		}
+		
+		if (id.equals(IMetaModelConstants.SCRIPTLIB)) {
+			
+			if (StringUtil.equals(resource.getFileExtension(), "js")) {
+				return false;
+			}
+
+			if (StringUtil.equals(resource.getFileExtension(), "jss")) {
+				return false;
+			}
+			
+			if (StringUtil.equals(resource.getFileExtension(), "lss")) {
+				return false;
+			}
+
+			
+		}
+		
 		if (getCanFilterIds().contains(id)) {
 
 			logTrace("Yes we can filter" + mmd.getName());
