@@ -246,6 +246,31 @@
             class="org.openntf.swiper.builder.SwiperSyncListener">
       </syncListener>
    </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.openntf.swiper.actionSet"
+            label="Swiper"
+            visible="true">
+         <menu
+               id="org.openntf.swiper.menu"
+               label="Swiper">
+            <separator
+                  name="org.openntf.swiper.separator">
+            </separator>
+         </menu>
+         <action
+               class="org.openntf.swiper.action.SyncAction"
+               enablesFor="1"
+               icon="icons/arrow_refresh_small.png"
+               id="org.openntf.swiper.action1"
+               label="Sync with On Disk Project"
+               menubarPath="org.openntf.swiper.menu/org.openntf.swiper.separator"
+               style="push"
+               toolbarPath="swiper">
+         </action>
+      </actionSet>
+   </extension>
 
 
 </plugin>

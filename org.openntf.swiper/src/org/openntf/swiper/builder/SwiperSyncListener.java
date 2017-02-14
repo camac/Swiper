@@ -67,14 +67,10 @@ public class SwiperSyncListener extends SyncListener {
 		try {
 			if (designerProject.getProject().hasNature(SwiperNature.NATURE_ID)) {
 
-				if (SwiperUtil.shouldFilter(src) || dst.getFileExtension().endsWith("metadata")) {
-
-					System.out.println("FILTERING: " + dst.getFullPath());
+				if (SwiperUtil.shouldFilterDestinationFile(dst)) {
 
 					if (dst instanceof IFile) {
-
 						action.filterDiskFile(src, (IFile) dst, monitor);
-
 					}
 
 				} else {
@@ -242,6 +238,75 @@ public class SwiperSyncListener extends SyncListener {
 		*/
 
 		return true;
+//		try {
+//
+//			if (context.getDesignerProject().getProject().hasNature(SwiperNature.NATURE_ID)) {
+//
+//				System.out.println("PRE EXPORT " + dst.getFullPath());
+//				
+//				if (SwiperUtil.shouldFilter(src)) {
+//
+//					if (dst instanceof IFile) {
+//
+//						System.out.println("Checking Hashes for " + src.getFullPath());
+//						
+//						// Hash Source
+//						MessageDigest md = MessageDigest.getInstance("MD5");
+//
+//						NotesDesignElement nde = DominoResourcesPlugin.getNotesDesignElement(src);
+//						InputStream is = nde.fetchSyncContent(0, monitor);
+//						DigestInputStream dis = new DigestInputStream(is, md);
+//						byte[] digestsrc = md.digest();
+//						
+//						is.close();
+//						
+//						md.reset();
+//
+//						// Hash Dst
+//						MessageDigest md2 = MessageDigest.getInstance("MD5");
+//
+//						IFile dstFile = (IFile) dst;
+//
+//						is = dstFile.getContents(true);
+//						dis = new DigestInputStream(is, md2);
+//						byte[] digestdst = md2.digest();
+//
+//						is.close();
+//						
+//						String srchash = bytesToHex(digestsrc);
+//						String dsthash = bytesToHex(digestdst);
+//						
+//						System.out.println("Hash Src : " + srchash);
+//						System.out.println("Hash Dst : " + dsthash);
+//
+//						if (StringUtil.equals(srchash, dsthash)) {
+//							System.out.println("DONT EXPORT IT");
+//							//return false;
+//						}
+//						
+//					}
+//
+//				} else {
+//					System.out.println(" No Need to filter " + src.getFullPath());
+//				}
+//
+//			}
+//
+//		} catch (CoreException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (NoSuchAlgorithmException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (NsfException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//		return true;
 	}
 
 	// From

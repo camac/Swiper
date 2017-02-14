@@ -46,6 +46,9 @@ public class SwiperUtil {
 	public static LogMgr SWIPER_LOG = Log.load("org.openntf.swiper", "Logger used for Swiper");
 	private static final String MARKER_TYPE = "org.openntf.swiper.xmlProblem";
 
+	private static Set<String> extensionsToFilter;
+	private static Set<String> filenamesToFilter;
+	
 	private static boolean loggingToFile = false;
 	
 	private static boolean filterEverything = true;
@@ -541,6 +544,69 @@ public class SwiperUtil {
 		}
 		return null;
 
+	}
+	
+	public static Set<String> getExtensionsToFilter() {
+		if (SwiperUtil.extensionsToFilter == null) {
+			SwiperUtil.extensionsToFilter = new HashSet<String>();
+
+			SwiperUtil.extensionsToFilter.add(".metadata");
+			SwiperUtil.extensionsToFilter.add(".aa");
+			SwiperUtil.extensionsToFilter.add(".column");
+			SwiperUtil.extensionsToFilter.add(".dcr");
+			SwiperUtil.extensionsToFilter.add(".fa");
+			SwiperUtil.extensionsToFilter.add(".field");
+			SwiperUtil.extensionsToFilter.add(".folder");
+			SwiperUtil.extensionsToFilter.add(".form");
+			SwiperUtil.extensionsToFilter.add(".frameset");
+			SwiperUtil.extensionsToFilter.add(".ija");
+			SwiperUtil.extensionsToFilter.add(".ja");
+			SwiperUtil.extensionsToFilter.add(".javalib");
+			SwiperUtil.extensionsToFilter.add(".lsa");
+			SwiperUtil.extensionsToFilter.add(".lsdb");
+			SwiperUtil.extensionsToFilter.add(".navigator");
+			SwiperUtil.extensionsToFilter.add(".outline");
+			SwiperUtil.extensionsToFilter.add(".page");
+			SwiperUtil.extensionsToFilter.add(".subform");
+			SwiperUtil.extensionsToFilter.add(".view");
+
+			SwiperUtil.extensionsToFilter.add("AboutDocument");
+			SwiperUtil.extensionsToFilter.add("database.properties");
+			SwiperUtil.extensionsToFilter.add("IconNote");
+			SwiperUtil.extensionsToFilter.add("Shared?Actions");
+			SwiperUtil.extensionsToFilter.add("UsingDocument");
+			
+		}
+		
+		return SwiperUtil.extensionsToFilter;
+	}
+	
+	public static boolean shouldFilterDestinationFile(IResource res) {
+		
+		String extension = res.getFileExtension();
+		
+		
+		
+		if (StringUtil.isNotEmpty(extension)) {
+			
+			System.out.println("." + extension);
+			
+			if (getExtensionsToFilter().contains("." + extension)) {
+				return true;
+			}
+		}
+		
+		String name = res.getName();
+		
+		if (StringUtil.isNotEmpty(name)) {
+			if (getExtensionsToFilter().contains(name)) {
+				return true;
+			}
+		}
+		
+		return false;
+		
+		
 	}
 
 }
