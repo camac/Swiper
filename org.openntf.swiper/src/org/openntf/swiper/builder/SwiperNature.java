@@ -20,7 +20,6 @@ import org.openntf.swiper.util.SwiperUtil;
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.NsfException;
 import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
-import com.ibm.designer.domino.team.builder.NsfToPhysicalSynBuilder;
 import com.ibm.designer.domino.team.util.SyncUtil;
 
 public class SwiperNature implements IProjectNature {

@@ -88,7 +88,7 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 	}
 
-	private Transformer getTransformer() throws TransformerConfigurationException, FileNotFoundException {
+	public Transformer getTransformer() throws TransformerConfigurationException, FileNotFoundException {
 
 		if (this.cachedXslt == null) {
 
@@ -130,10 +130,10 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 	}
 
-	private void filter(IFile diskFile, Transformer transformer, IProgressMonitor monitor)
+	public InputStream getFilteredInputStream(IFile diskFile, Transformer transformer, IProgressMonitor monitor)
 			throws TransformerException, CoreException, IOException {
-
-		InputStream is = diskFile.getContents();
+		
+		InputStream is = diskFile.getContents(true);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Source source = new StreamSource(is);
 
@@ -156,8 +156,18 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 		transformer.transform(source, result);
 
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		diskFile.setContents(bais, 0, monitor);
+		is.close();
+		
+		return new ByteArrayInputStream(baos.toByteArray());		
+		
+	}
+	
+	private void filter(IFile diskFile, Transformer transformer, IProgressMonitor monitor)
+			throws TransformerException, CoreException, IOException {
+
+		InputStream is = getFilteredInputStream(diskFile, transformer, monitor);
+		
+		diskFile.setContents(is, 0, monitor);
 
 		/*
 		 * When you export the DXL normally, there is an Newline at the end of
@@ -174,14 +184,12 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 			String linesep = System.getProperty("line.separator");
 
 			linesep = linesep + linesep;
-			bais = new ByteArrayInputStream(linesep.getBytes("UTF-8"));
+			ByteArrayInputStream bais = new ByteArrayInputStream(linesep.getBytes("UTF-8"));
 			diskFile.appendContents(bais, 0, monitor);
 
 		}
 
 		is.close();
-
-		//SyncUtil.setModifiedBySync(diskFile);
 
 	}
 
