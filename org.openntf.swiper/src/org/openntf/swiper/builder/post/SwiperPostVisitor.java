@@ -34,7 +34,7 @@ public class SwiperPostVisitor implements IResourceDeltaVisitor {
 
 	private void processSharedAction(IFolder sharedActionFolder) throws CoreException {
 		
-		System.out.println("Going to process the shared action folder");
+		SwiperUtil.logTrace("Going to process the shared action folder");
 		
 		processDesignerFile(sharedActionFolder);
 		

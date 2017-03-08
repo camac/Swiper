@@ -35,15 +35,12 @@ public class SwiperSyncListener extends SyncListener {
 
 	public SwiperSyncListener() {
 		super();
-		System.out.println("Created a Sync Listener");
 	}
 
 	@Override
 	public void preSync(IDominoDesignerProject desProject, IProject diskProject, int direction) {
 
-		System.out.println("==========================");
-		System.out.println("About to Sync " + desProject.getProject().getName());
-		System.out.println("--------------------------");
+		SwiperUtil.logTrace("About to Sync " + desProject.getProject().getName());
 
 		action = new FilterMetadataAction();
 
@@ -55,9 +52,8 @@ public class SwiperSyncListener extends SyncListener {
 	public void postSync(IDominoDesignerProject desProject, IProject diskProject, int direction) {
 
 		action = null;
-		System.out.println("---------------------------");
-		System.out.println("Finished Sync : " + desProject.getProject().getName());
-		System.out.println("===========================");
+
+		SwiperUtil.logTrace("Finished Sync : " + desProject.getProject().getName());
 
 	}
 
@@ -74,7 +70,7 @@ public class SwiperSyncListener extends SyncListener {
 					}
 
 				} else {
-					System.out.println(" No Need to filter " + src.getFullPath());
+					SwiperUtil.logTrace("No Need to filter " + src.getFullPath());
 				}
 
 			}
@@ -90,7 +86,7 @@ public class SwiperSyncListener extends SyncListener {
 		if (context instanceof RenameSyncContext) {
 			RenameSyncContext renameContext = (RenameSyncContext)context;
 			IDominoDesignerProject designerProject = renameContext.getDesignerProject();
-			System.out.println("POST RENAME: " + dst.getFullPath() + "'" + dst.getFileExtension() + "'");
+			SwiperUtil.logTrace("POST RENAME: " + dst.getFullPath() + "'" + dst.getFileExtension() + "'");
 			
 			filterIfNeeded(designerProject, renameContext.getNewNsfFile(), dst, context);
 		}
@@ -103,7 +99,7 @@ public class SwiperSyncListener extends SyncListener {
 
 		if (synccontext instanceof ExportContext) {
 			try {
-				System.out.println("POST EXPORT: " + dst.getFullPath() + "'" + dst.getFileExtension() + "'");
+				SwiperUtil.logTrace("POST EXPORT: " + dst.getFullPath() + "'" + dst.getFileExtension() + "'");
 				IDominoDesignerProject designerProject = ((ExportContext) synccontext).getDesignerProject();
 				filterIfNeeded(designerProject, src, dst, synccontext);
 
@@ -119,7 +115,6 @@ public class SwiperSyncListener extends SyncListener {
 	@SuppressWarnings("unused")
 	private boolean equalsHash(IResource src, IResource dst)
 			throws NoSuchAlgorithmException, NsfException, CoreException, IOException {
-		System.out.println("Checking Hashes for " + src.getFullPath());
 
 		// Hash Source
 		MessageDigest md = MessageDigest.getInstance("MD5");
@@ -147,9 +142,6 @@ public class SwiperSyncListener extends SyncListener {
 		String srchash = bytesToHex(digestsrc);
 		String dsthash = bytesToHex(digestdst);
 
-		System.out.println("Hash Src : " + srchash);
-		System.out.println("Hash Dst : " + dsthash);
-
 		return StringUtil.equals(srchash, dsthash);
 	}
 
@@ -175,9 +167,6 @@ public class SwiperSyncListener extends SyncListener {
 
 		String srchash = bytesToHex(digestsrc);
 		String dsthash = bytesToHex(digestdst);
-
-		System.out.println("Hash Src : " + srchash);
-		System.out.println("Hash Dst : " + dsthash);
 
 		return StringUtil.equals(srchash, dsthash);
 	}

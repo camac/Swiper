@@ -73,7 +73,7 @@ public class SwiperPostSyncBuilder extends IncrementalProjectBuilder {
 
 		SwiperUtil.logTrace("Swiper: PostSyncBuilder");
 
-		SwiperUtil.logInfo("**** Running Post Sync Builder");
+		SwiperUtil.logTrace("**** Running Post Sync Builder");
 		
 		try {
 			this.designerProject = DominoResourcesPlugin

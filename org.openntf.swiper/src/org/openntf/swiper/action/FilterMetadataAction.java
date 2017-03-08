@@ -206,7 +206,7 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 			if (diskFile != null) {
 				filter(diskFile, transformer, monitor);
-				SwiperUtil.logInfo("Filtered " + diskFile.getName());
+				SwiperUtil.logTrace("Filtered " + diskFile.getName());
 			}
 
 		} catch (TransformerConfigurationException e) {
@@ -237,7 +237,7 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		SwiperUtil.logInfo("**** Performing Explicit Filtering");
+		SwiperUtil.logTrace("**** Performing Explicit Filtering");
 
 		processSelection(event);
 

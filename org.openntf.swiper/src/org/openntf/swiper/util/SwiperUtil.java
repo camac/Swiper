@@ -366,7 +366,7 @@ public class SwiperUtil {
 			SWIPER_LOG.infop("SwiperUtil", "", "Swiper: " + message, args);
 		}
 	}
-
+	
 	public static void logTrace(String message) {
 		SWIPER_LOG.traceDebug("Swiper: " + message);
 	}
@@ -588,9 +588,7 @@ public class SwiperUtil {
 		
 		
 		if (StringUtil.isNotEmpty(extension)) {
-			
-			System.out.println("." + extension);
-			
+					
 			if (getExtensionsToFilter().contains("." + extension)) {
 				return true;
 			}
