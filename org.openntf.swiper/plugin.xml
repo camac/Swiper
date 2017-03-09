@@ -260,15 +260,28 @@
             </separator>
          </menu>
          <action
-               class="org.openntf.swiper.action.SyncAction"
+               class="org.openntf.swiper.action.RefreshODPAction"
                enablesFor="1"
                icon="icons/arrow_refresh_small.png"
+               id="org.openntf.swiper.refreshodpaction"
+               label="Refresh On-Disk Project"
+               menubarPath="org.openntf.swiper.menu/org.openntf.swiper.separator"
+               style="push"
+               toolbarPath="swiper"
+               tooltip="Refresh On-Disk Project">
+         </action>
+         <action
+               class="org.openntf.swiper.action.SyncAction"
+               enablesFor="1"
+               icon="icons/arrow_switch.png"
                id="org.openntf.swiper.action1"
                label="Sync with On Disk Project"
                menubarPath="org.openntf.swiper.menu/org.openntf.swiper.separator"
                style="push"
-               toolbarPath="swiper">
+               toolbarPath="swiper"
+               tooltip="Sync with On Disk Project">
          </action>
+
       </actionSet>
    </extension>
 
