@@ -61,7 +61,14 @@ public class SwiperSyncListener extends SyncListener {
 			ISyncContext context) {
 
 		try {
-			if (designerProject.getProject().hasNature(SwiperNature.NATURE_ID)) {
+			
+			boolean enabledforall = SwiperUtil.isEnableForAll();
+			
+			if (enabledforall) {
+				SwiperUtil.logTrace("Swiping because swiper is enabled for all projects");
+			}
+			
+			if (enabledforall || designerProject.getProject().hasNature(SwiperNature.NATURE_ID)) {
 
 				if (SwiperUtil.shouldFilterDestinationFile(dst)) {
 

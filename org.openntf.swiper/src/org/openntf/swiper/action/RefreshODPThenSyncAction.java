@@ -4,14 +4,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.NsfException;
 import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
 import com.ibm.designer.domino.team.util.SyncUtil;
 
-public class RefreshODPAction extends SyncAction {
+public class RefreshODPThenSyncAction extends SyncAction {
 
 	@Override
 	public void doExecute(IProgressMonitor monitor) {
@@ -25,6 +24,8 @@ public class RefreshODPAction extends SyncAction {
 				IProject odp = SyncUtil.getAssociatedDiskProject(ddp, false);
 				
 				odp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				
+				super.doExecute();
 				
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block

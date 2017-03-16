@@ -281,6 +281,17 @@
                toolbarPath="swiper"
                tooltip="Sync with On Disk Project">
          </action>
+         <action
+               class="org.openntf.swiper.action.RefreshODPThenSyncAction"
+               enablesFor="1"
+               icon="icons/sport_8ball.png"
+               id="org.openntf.swiper.refreshodpthensyncaction"
+               label="Refresh On-Disk Project and then Sync"
+               menubarPath="org.openntf.swiper.menu/org.openntf.swiper.separator"
+               style="push"
+               toolbarPath="swiper"
+               tooltip="Refresh On-Disk Project and then Sync">
+         </action>
 
       </actionSet>
    </extension>
