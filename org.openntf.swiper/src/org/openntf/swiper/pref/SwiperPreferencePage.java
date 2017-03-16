@@ -57,7 +57,7 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 				"Mimic EOF of DXL Export (Add extra Line Endings to end of file)", getFieldEditorParent());
 		addField(dontAddNewLine);
 		
-		if (isPropertyPage()) {
+		if (!isPropertyPage()) {
 			BooleanFieldEditor enableAll = new BooleanFieldEditor(PREF_ENABLE_ALL, "Enable Swiper for ALL Projects", getFieldEditorParent());
 			addField(enableAll);
 		}

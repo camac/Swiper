@@ -25,7 +25,7 @@ public class RefreshODPThenSyncAction extends SyncAction {
 				
 				odp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				
-				super.doExecute();
+				super.doExecute(monitor);
 				
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
