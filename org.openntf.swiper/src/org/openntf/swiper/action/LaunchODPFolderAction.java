@@ -1,16 +1,20 @@
 package org.openntf.swiper.action;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.NsfException;
 import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
+import com.ibm.designer.domino.team.action.SyncAction;
 import com.ibm.designer.domino.team.util.SyncUtil;
 
-public class RefreshODPAction extends SyncAction {
+public class LaunchODPFolderAction extends SyncAction {
 
 	@Override
 	public void doExecute(IProgressMonitor monitor) {
@@ -23,13 +27,14 @@ public class RefreshODPAction extends SyncAction {
 				IDominoDesignerProject ddp = DominoResourcesPlugin.getDominoDesignerProject(p);
 				IProject odp = SyncUtil.getAssociatedDiskProject(ddp, false);
 				
-				odp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				File odpFolder = odp.getLocation().toFile();				
+				Desktop.getDesktop().open(odpFolder);				
 				
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NsfException e) {
-				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -38,7 +43,8 @@ public class RefreshODPAction extends SyncAction {
 
 	@Override
 	protected String getTaskName() {
-		return "Refreshing On-Disk Project";
+		return "Open ODP Folder";
 	}
 
+	
 }
