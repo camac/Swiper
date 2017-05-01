@@ -6,8 +6,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.xml.transform.Transformer;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -30,7 +28,6 @@ import com.ibm.designer.domino.team.util.SyncUtil;
 
 public class SwiperSyncListener extends SyncListener {
 
-	private FilterMetadataAction action;
 	private IProgressMonitor monitor = new NullProgressMonitor();
 
 	public SwiperSyncListener() {
@@ -42,16 +39,11 @@ public class SwiperSyncListener extends SyncListener {
 
 		SwiperUtil.logTrace("About to Sync " + desProject.getProject().getName());
 
-		action = new FilterMetadataAction();
-
-		action.setSyncProjects(desProject, diskProject);
 
 	}
 
 	@Override
 	public void postSync(IDominoDesignerProject desProject, IProject diskProject, int direction) {
-
-		action = null;
 
 		SwiperUtil.logTrace("Finished Sync : " + desProject.getProject().getName());
 
@@ -61,6 +53,17 @@ public class SwiperSyncListener extends SyncListener {
 			ISyncContext context) {
 
 		try {
+
+			FilterMetadataAction action = new FilterMetadataAction();
+
+			IProject diskProject = SyncUtil.getAssociatedDiskProject(designerProject, false);
+			
+			if (diskProject == null) {
+				throw new NullPointerException("Could not find related Disk Project");
+			}
+			
+			action.setSyncProjects(designerProject, diskProject);
+
 			if (designerProject.getProject().hasNature(SwiperNature.NATURE_ID)) {
 
 				if (SwiperUtil.shouldFilterDestinationFile(dst)) {
@@ -75,7 +78,7 @@ public class SwiperSyncListener extends SyncListener {
 
 			}
 		} catch (Exception e) {
-
+			SwiperUtil.logTrace(e.getMessage());
 		}
 
 	}
