@@ -260,6 +260,30 @@
             </separator>
          </menu>
          <action
+               class="org.openntf.swiper.action.LaunchODPFolderAction"
+               enablesFor="1"
+               icon="icons/folder_go.png"
+               id="org.openntf.swiper.launchodpfolderaction"
+               label="Open ODP Folder in System Explorer"
+               menubarPath="org.openntf.swiper.menu/org.openntf.swiper.separator"
+               style="push"
+               toolbarPath="swiper"
+               tooltip="Open ODP Folder in System Explorer">
+         </action>
+
+         <action
+               class="org.openntf.swiper.action.RefreshODPThenSyncAction"
+               enablesFor="1"
+               icon="icons/sport_8ball.png"
+               id="org.openntf.swiper.refreshodpthensyncaction"
+               label="Refresh On-Disk Project and then Sync"
+               menubarPath="org.openntf.swiper.menu/org.openntf.swiper.separator"
+               style="push"
+               toolbarPath="swiper"
+               tooltip="Refresh On-Disk Project and then Sync">
+         </action>
+
+         <action
                class="org.openntf.swiper.action.RefreshODPAction"
                enablesFor="1"
                icon="icons/arrow_refresh_small.png"

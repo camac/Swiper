@@ -6,9 +6,9 @@ import org.eclipse.core.commands.ExecutionException;
 public class SyncAction extends com.ibm.designer.domino.team.action.SyncAction {
 
 	@Override
-	public Object execute(ExecutionEvent arg0) throws ExecutionException {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		return super.execute(arg0);
+		return super.execute(event);
 	}
 
 	

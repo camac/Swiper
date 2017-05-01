@@ -10,7 +10,7 @@ import com.ibm.designer.domino.ide.resources.NsfException;
 import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
 import com.ibm.designer.domino.team.util.SyncUtil;
 
-public class RefreshODPAction extends SyncAction {
+public class RefreshODPThenSyncAction extends SyncAction {
 
 	@Override
 	public void doExecute(IProgressMonitor monitor) {
@@ -24,6 +24,8 @@ public class RefreshODPAction extends SyncAction {
 				IProject odp = SyncUtil.getAssociatedDiskProject(ddp, false);
 				
 				odp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+				
+				super.doExecute(monitor);
 				
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block

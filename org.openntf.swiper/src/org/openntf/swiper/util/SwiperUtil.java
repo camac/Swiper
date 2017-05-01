@@ -48,9 +48,9 @@ public class SwiperUtil {
 
 	private static Set<String> extensionsToFilter;
 	private static Set<String> filenamesToFilter;
-	
+
 	private static boolean loggingToFile = false;
-	
+
 	private static boolean filterEverything = true;
 
 	public static Set<String> getCanFilterIds() {
@@ -84,7 +84,7 @@ public class SwiperUtil {
 
 		things.add(IMetaModelConstants.APPLETS);
 		things.add(IMetaModelConstants.STYLESHEETS);
-		
+
 		things.add(IMetaModelConstants.ABOUTDOC);
 		things.add(IMetaModelConstants.DBPROPS);
 		things.add(IMetaModelConstants.ICONNOTE);
@@ -92,13 +92,13 @@ public class SwiperUtil {
 		things.add(IMetaModelConstants.USINGDOC);
 
 		things.add(IMetaModelConstants.SCRIPTLIB);
-		
+
 		things.add(IMetaModelConstants.STYLEKITS);
 
 		things.add(IMetaModelConstants.WIRINGPROPS);
 		things.add(IMetaModelConstants.APPS);
 		things.add(IMetaModelConstants.COMPONENTS);
-		
+
 		return things;
 	}
 
@@ -159,9 +159,9 @@ public class SwiperUtil {
 			}
 
 		}
-		
+
 		if (id.equals(IMetaModelConstants.SCRIPTLIB)) {
-			
+
 			if (StringUtil.equals(resource.getFileExtension(), "js")) {
 				return false;
 			}
@@ -169,14 +169,13 @@ public class SwiperUtil {
 			if (StringUtil.equals(resource.getFileExtension(), "jss")) {
 				return false;
 			}
-			
+
 			if (StringUtil.equals(resource.getFileExtension(), "lss")) {
 				return false;
 			}
 
-			
 		}
-		
+
 		if (getCanFilterIds().contains(id)) {
 
 			logTrace("Yes we can filter" + mmd.getName());
@@ -219,6 +218,10 @@ public class SwiperUtil {
 
 		return StringUtil.equalsIgnoreCase(Boolean.TRUE.toString(), stringValue);
 
+	}
+
+	public static Boolean isEnableForAll() {
+		return SwiperPreferenceManager.getInstance().getBooleanValue(SwiperPreferencePage.PREF_ENABLE_ALL, false);
 	}
 
 	public static Boolean isMimicDxlExportEOF() {
@@ -328,33 +331,32 @@ public class SwiperUtil {
 	public static boolean isLoggingToFile() {
 		return loggingToFile;
 	}
-	
+
 	public static void startLoggingToFile() {
 
 		logInfo("Starting Logging to File");
-		
-		Handler handler = SwiperActivator.getDefault().getFileHandler();		
+
+		Handler handler = SwiperActivator.getDefault().getFileHandler();
 		SWIPER_LOG.getLogger().addHandler(handler);
 		SWIPER_LOG.getLogger().setLevel(Level.ALL);
 		loggingToFile = true;
-			
+
 	}
-	
+
 	public static void stopLoggingToFile() {
 
 		logInfo("Stopping Logging to File");
-		
-		Handler handler = SwiperActivator.getDefault().getFileHandler();		
+
+		Handler handler = SwiperActivator.getDefault().getFileHandler();
 		SWIPER_LOG.getLogger().removeHandler(handler);
 		SWIPER_LOG.getLogger().setLevel(Level.INFO);
-		
+
 		loggingToFile = false;
 
 		SwiperActivator.getDefault().closeFileHandler();
 
-		
 	}
-	
+
 	public static void logInfo(String message) {
 		if (SWIPER_LOG.isInfoEnabled()) {
 			SWIPER_LOG.infop("SwiperUtil", "", "Swiper: " + message, new Object[0]);
@@ -366,7 +368,7 @@ public class SwiperUtil {
 			SWIPER_LOG.infop("SwiperUtil", "", "Swiper: " + message, args);
 		}
 	}
-	
+
 	public static void logTrace(String message) {
 		SWIPER_LOG.traceDebug("Swiper: " + message);
 	}
@@ -545,7 +547,7 @@ public class SwiperUtil {
 		return null;
 
 	}
-	
+
 	public static Set<String> getExtensionsToFilter() {
 		if (SwiperUtil.extensionsToFilter == null) {
 			SwiperUtil.extensionsToFilter = new HashSet<String>();
@@ -575,36 +577,33 @@ public class SwiperUtil {
 			SwiperUtil.extensionsToFilter.add("IconNote");
 			SwiperUtil.extensionsToFilter.add("Shared?Actions");
 			SwiperUtil.extensionsToFilter.add("UsingDocument");
-			
+
 		}
-		
+
 		return SwiperUtil.extensionsToFilter;
 	}
-	
+
 	public static boolean shouldFilterDestinationFile(IResource res) {
-		
+
 		String extension = res.getFileExtension();
-		
-		
-		
+
 		if (StringUtil.isNotEmpty(extension)) {
-					
+
 			if (getExtensionsToFilter().contains("." + extension)) {
 				return true;
 			}
 		}
-		
+
 		String name = res.getName();
-		
+
 		if (StringUtil.isNotEmpty(name)) {
 			if (getExtensionsToFilter().contains(name)) {
 				return true;
 			}
 		}
-		
+
 		return false;
-		
-		
+
 	}
 
 }
