@@ -6,8 +6,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.xml.transform.Transformer;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -30,7 +28,6 @@ import com.ibm.designer.domino.team.util.SyncUtil;
 
 public class SwiperSyncListener extends SyncListener {
 
-	private FilterMetadataAction action;
 	private IProgressMonitor monitor = new NullProgressMonitor();
 
 	public SwiperSyncListener() {
@@ -42,16 +39,10 @@ public class SwiperSyncListener extends SyncListener {
 
 		SwiperUtil.logTrace("About to Sync " + desProject.getProject().getName());
 
-		action = new FilterMetadataAction();
-
-		action.setSyncProjects(desProject, diskProject);
-
 	}
 
 	@Override
 	public void postSync(IDominoDesignerProject desProject, IProject diskProject, int direction) {
-
-		action = null;
 
 		SwiperUtil.logTrace("Finished Sync : " + desProject.getProject().getName());
 
@@ -61,13 +52,23 @@ public class SwiperSyncListener extends SyncListener {
 			ISyncContext context) {
 
 		try {
-			
+
+			FilterMetadataAction action = new FilterMetadataAction();
+
+			IProject diskProject = SyncUtil.getAssociatedDiskProject(designerProject, false);
+
+			if (diskProject == null) {
+				throw new NullPointerException("Could not find related Disk Project");
+			}
+
+			action.setSyncProjects(designerProject, diskProject);
+
 			boolean enabledforall = SwiperUtil.isEnableForAll();
-			
+
 			if (enabledforall) {
 				SwiperUtil.logTrace("Swiping because swiper is enabled for all projects");
 			}
-			
+
 			if (enabledforall || designerProject.getProject().hasNature(SwiperNature.NATURE_ID)) {
 
 				if (SwiperUtil.shouldFilterDestinationFile(dst)) {
@@ -81,8 +82,9 @@ public class SwiperSyncListener extends SyncListener {
 				}
 
 			}
+			
 		} catch (Exception e) {
-
+			SwiperUtil.logTrace(e.getMessage());
 		}
 
 	}
@@ -91,10 +93,10 @@ public class SwiperSyncListener extends SyncListener {
 	public void postRename(IResource src, IResource dst, ISyncContext context) {
 
 		if (context instanceof RenameSyncContext) {
-			RenameSyncContext renameContext = (RenameSyncContext)context;
+			RenameSyncContext renameContext = (RenameSyncContext) context;
 			IDominoDesignerProject designerProject = renameContext.getDesignerProject();
 			SwiperUtil.logTrace("POST RENAME: " + dst.getFullPath() + "'" + dst.getFileExtension() + "'");
-			
+
 			filterIfNeeded(designerProject, renameContext.getNewNsfFile(), dst, context);
 		}
 
@@ -180,129 +182,126 @@ public class SwiperSyncListener extends SyncListener {
 
 	public boolean preExport(IResource src, IResource dst, ExportContext context) {
 
-		/* Hoping to figure out how to avoid filtering if contents are the same but haven't done so yet
-		try {
-
-			if (context.getDesignerProject().getProject().hasNature(SwiperNature.NATURE_ID)) {
-
-				System.out.println("PRE EXPORT " + dst.getFullPath());
-
-				if (SwiperUtil.shouldFilter(src)) {
-
-					if (dst instanceof IFile) {
-
-						IFile dstFile = (IFile) dst;
-
-						try {
-
-							Transformer transformer = action.getTransformer();
-							InputStream is = action.getFilteredInputStream(dstFile, transformer, monitor);
-
-							InputStream destIs = dstFile.getContents(true);
-
-							if (SyncUtil.contentsEqual(is, destIs)) {
-								System.out.println("Filtered Contents Equal ==");
-							} else {
-								System.out.println("Filtered Contents Different <>");
-							}
-
-							if (src instanceof IFile) {
-
-								if (equalsHash(((IFile) src).getContents(true), destIs)) {
-									System.out.println("Filtered Contents Hash equal ==");
-								} else {
-									System.out.println("Filtered Contents Hash different <>");
-								}
-							}
-
-						} catch (Exception e) {
-
-						}
-
-					}
-
-				} else {
-					System.out.println(" No Need to filter " + src.getFullPath());
-				}
-
-			}
-
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
+		/*
+		 * Hoping to figure out how to avoid filtering if contents are the same
+		 * but haven't done so yet try {
+		 * 
+		 * if (context.getDesignerProject().getProject().hasNature(SwiperNature.
+		 * NATURE_ID)) {
+		 * 
+		 * System.out.println("PRE EXPORT " + dst.getFullPath());
+		 * 
+		 * if (SwiperUtil.shouldFilter(src)) {
+		 * 
+		 * if (dst instanceof IFile) {
+		 * 
+		 * IFile dstFile = (IFile) dst;
+		 * 
+		 * try {
+		 * 
+		 * Transformer transformer = action.getTransformer(); InputStream is =
+		 * action.getFilteredInputStream(dstFile, transformer, monitor);
+		 * 
+		 * InputStream destIs = dstFile.getContents(true);
+		 * 
+		 * if (SyncUtil.contentsEqual(is, destIs)) { System.out.println(
+		 * "Filtered Contents Equal =="); } else { System.out.println(
+		 * "Filtered Contents Different <>"); }
+		 * 
+		 * if (src instanceof IFile) {
+		 * 
+		 * if (equalsHash(((IFile) src).getContents(true), destIs)) {
+		 * System.out.println("Filtered Contents Hash equal =="); } else {
+		 * System.out.println("Filtered Contents Hash different <>"); } }
+		 * 
+		 * } catch (Exception e) {
+		 * 
+		 * }
+		 * 
+		 * }
+		 * 
+		 * } else { System.out.println(" No Need to filter " +
+		 * src.getFullPath()); }
+		 * 
+		 * }
+		 * 
+		 * } catch (CoreException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
 
 		return true;
-//		try {
-//
-//			if (context.getDesignerProject().getProject().hasNature(SwiperNature.NATURE_ID)) {
-//
-//				System.out.println("PRE EXPORT " + dst.getFullPath());
-//				
-//				if (SwiperUtil.shouldFilter(src)) {
-//
-//					if (dst instanceof IFile) {
-//
-//						System.out.println("Checking Hashes for " + src.getFullPath());
-//						
-//						// Hash Source
-//						MessageDigest md = MessageDigest.getInstance("MD5");
-//
-//						NotesDesignElement nde = DominoResourcesPlugin.getNotesDesignElement(src);
-//						InputStream is = nde.fetchSyncContent(0, monitor);
-//						DigestInputStream dis = new DigestInputStream(is, md);
-//						byte[] digestsrc = md.digest();
-//						
-//						is.close();
-//						
-//						md.reset();
-//
-//						// Hash Dst
-//						MessageDigest md2 = MessageDigest.getInstance("MD5");
-//
-//						IFile dstFile = (IFile) dst;
-//
-//						is = dstFile.getContents(true);
-//						dis = new DigestInputStream(is, md2);
-//						byte[] digestdst = md2.digest();
-//
-//						is.close();
-//						
-//						String srchash = bytesToHex(digestsrc);
-//						String dsthash = bytesToHex(digestdst);
-//						
-//						System.out.println("Hash Src : " + srchash);
-//						System.out.println("Hash Dst : " + dsthash);
-//
-//						if (StringUtil.equals(srchash, dsthash)) {
-//							System.out.println("DONT EXPORT IT");
-//							//return false;
-//						}
-//						
-//					}
-//
-//				} else {
-//					System.out.println(" No Need to filter " + src.getFullPath());
-//				}
-//
-//			}
-//
-//		} catch (CoreException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (NoSuchAlgorithmException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (NsfException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//		return true;
+		// try {
+		//
+		// if
+		// (context.getDesignerProject().getProject().hasNature(SwiperNature.NATURE_ID))
+		// {
+		//
+		// System.out.println("PRE EXPORT " + dst.getFullPath());
+		//
+		// if (SwiperUtil.shouldFilter(src)) {
+		//
+		// if (dst instanceof IFile) {
+		//
+		// System.out.println("Checking Hashes for " + src.getFullPath());
+		//
+		// // Hash Source
+		// MessageDigest md = MessageDigest.getInstance("MD5");
+		//
+		// NotesDesignElement nde =
+		// DominoResourcesPlugin.getNotesDesignElement(src);
+		// InputStream is = nde.fetchSyncContent(0, monitor);
+		// DigestInputStream dis = new DigestInputStream(is, md);
+		// byte[] digestsrc = md.digest();
+		//
+		// is.close();
+		//
+		// md.reset();
+		//
+		// // Hash Dst
+		// MessageDigest md2 = MessageDigest.getInstance("MD5");
+		//
+		// IFile dstFile = (IFile) dst;
+		//
+		// is = dstFile.getContents(true);
+		// dis = new DigestInputStream(is, md2);
+		// byte[] digestdst = md2.digest();
+		//
+		// is.close();
+		//
+		// String srchash = bytesToHex(digestsrc);
+		// String dsthash = bytesToHex(digestdst);
+		//
+		// System.out.println("Hash Src : " + srchash);
+		// System.out.println("Hash Dst : " + dsthash);
+		//
+		// if (StringUtil.equals(srchash, dsthash)) {
+		// System.out.println("DONT EXPORT IT");
+		// //return false;
+		// }
+		//
+		// }
+		//
+		// } else {
+		// System.out.println(" No Need to filter " + src.getFullPath());
+		// }
+		//
+		// }
+		//
+		// } catch (CoreException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (NoSuchAlgorithmException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (NsfException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		//
+		// return true;
 	}
 
 	// From
