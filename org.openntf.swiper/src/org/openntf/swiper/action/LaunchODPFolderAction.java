@@ -16,6 +16,16 @@ import com.ibm.designer.domino.team.util.SyncUtil;
 
 public class LaunchODPFolderAction extends SyncAction {
 
+	public LaunchODPFolderAction() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public LaunchODPFolderAction(int arg0) {
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public void doExecute(IProgressMonitor monitor) {
 
@@ -26,10 +36,10 @@ public class LaunchODPFolderAction extends SyncAction {
 
 				IDominoDesignerProject ddp = DominoResourcesPlugin.getDominoDesignerProject(p);
 				IProject odp = SyncUtil.getAssociatedDiskProject(ddp, false);
-				
-				File odpFolder = odp.getLocation().toFile();				
-				Desktop.getDesktop().open(odpFolder);				
-				
+
+				File odpFolder = odp.getLocation().toFile();
+				Desktop.getDesktop().open(odpFolder);
+
 			} catch (CoreException e) {
 				e.printStackTrace();
 			} catch (NsfException e) {
@@ -46,5 +56,4 @@ public class LaunchODPFolderAction extends SyncAction {
 		return "Open ODP Folder";
 	}
 
-	
 }

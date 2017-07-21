@@ -12,6 +12,14 @@ import com.ibm.designer.domino.team.util.SyncUtil;
 
 public class RefreshODPThenSyncAction extends SyncAction {
 
+	public RefreshODPThenSyncAction() {
+		super();
+	}
+
+	public RefreshODPThenSyncAction(int arg0) {
+		super(arg0);
+	}
+
 	@Override
 	public void doExecute(IProgressMonitor monitor) {
 
@@ -22,16 +30,14 @@ public class RefreshODPThenSyncAction extends SyncAction {
 
 				IDominoDesignerProject ddp = DominoResourcesPlugin.getDominoDesignerProject(p);
 				IProject odp = SyncUtil.getAssociatedDiskProject(ddp, false);
-				
+
 				odp.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 				
 				super.doExecute(monitor);
-				
+
 			} catch (CoreException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NsfException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

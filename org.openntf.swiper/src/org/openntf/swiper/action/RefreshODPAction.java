@@ -12,6 +12,14 @@ import com.ibm.designer.domino.team.util.SyncUtil;
 
 public class RefreshODPAction extends SyncAction {
 
+	public RefreshODPAction() {
+		super();
+	}
+
+	public RefreshODPAction(int arg0) {
+		super(arg0);
+	}
+
 	@Override
 	public void doExecute(IProgressMonitor monitor) {
 
