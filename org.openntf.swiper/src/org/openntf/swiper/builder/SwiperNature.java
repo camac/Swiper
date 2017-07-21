@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015 Cameron Gregor
+ * Copyright 2017 Cameron Gregor (http://camerongregor.com) 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -20,7 +20,6 @@ import org.openntf.swiper.util.SwiperUtil;
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.NsfException;
 import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
-import com.ibm.designer.domino.team.builder.NsfToPhysicalSynBuilder;
 import com.ibm.designer.domino.team.util.SyncUtil;
 
 public class SwiperNature implements IProjectNature {
@@ -40,8 +39,8 @@ public class SwiperNature implements IProjectNature {
 	public void configure() throws CoreException {
 
 
-		addBuilderToProject(project, SwiperPreSyncBuilder.BUILDER_ID, NsfToPhysicalSynBuilder.SYNC_BUILDER, true);
-		addBuilderToProject(project, SwiperPostSyncBuilder.BUILDER_ID, NsfToPhysicalSynBuilder.SYNC_BUILDER, false);
+		//addBuilderToProject(project, SwiperPreSyncBuilder.BUILDER_ID, NsfToPhysicalSynBuilder.SYNC_BUILDER, true);
+		//addBuilderToProject(project, SwiperPostSyncBuilder.BUILDER_ID, NsfToPhysicalSynBuilder.SYNC_BUILDER, false);
 			
 	}
 

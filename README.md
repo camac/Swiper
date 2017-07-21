@@ -91,3 +91,10 @@ YourKit supports open source projects with its full-featured Java Profiler.
 YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a>
 and <a href="https://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>,
 innovative and intelligent tools for profiling Java and .NET applications.
+
+# FAM FAM FAM Silk Icon Set
+
+In the Toolbar buttons I am using some icons from the excellent Silk Icons set by Mark James
+http://www.famfamfam.com/lab/icons/silk/
+
+
