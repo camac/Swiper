@@ -6,27 +6,25 @@
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License
  *******************************************************************************/
-package org.openntf.swiper.handlers;
+package org.openntf.swiper.action;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.handlers.HandlerUtil;
-import org.openntf.swiper.util.SwiperUtil;
 
-import com.ibm.designer.domino.team.action.AbstractTeamHandler;
+public class SyncAction extends com.ibm.designer.domino.team.action.SyncAction {
 
-public class RemoveSwiperHandler extends AbstractTeamHandler {
+	public SyncAction() {
+		super();
+	}
+
+	public SyncAction(int arg0) {
+		super(arg0);
+	}
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		processSelectedProject(HandlerUtil.getCurrentSelection(event));
-
-		if (this.desProject != null) {
-			SwiperUtil.removeNature(this.desProject.getProject());			
-		}
-
-		return null;
+		return super.execute(event);
 		
 	}
 

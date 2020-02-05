@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015 Cameron Gregor
+ * Copyright 2017 Cameron Gregor (http://camerongregor.com) 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
@@ -46,8 +46,11 @@ public class SwiperUtil {
 	public static LogMgr SWIPER_LOG = Log.load("org.openntf.swiper", "Logger used for Swiper");
 	private static final String MARKER_TYPE = "org.openntf.swiper.xmlProblem";
 
+	private static Set<String> extensionsToFilter;
+	private static Set<String> filenamesToFilter;
+
 	private static boolean loggingToFile = false;
-	
+
 	private static boolean filterEverything = true;
 
 	public static Set<String> getCanFilterIds() {
@@ -81,7 +84,7 @@ public class SwiperUtil {
 
 		things.add(IMetaModelConstants.APPLETS);
 		things.add(IMetaModelConstants.STYLESHEETS);
-		
+
 		things.add(IMetaModelConstants.ABOUTDOC);
 		things.add(IMetaModelConstants.DBPROPS);
 		things.add(IMetaModelConstants.ICONNOTE);
@@ -89,13 +92,13 @@ public class SwiperUtil {
 		things.add(IMetaModelConstants.USINGDOC);
 
 		things.add(IMetaModelConstants.SCRIPTLIB);
-		
+
 		things.add(IMetaModelConstants.STYLEKITS);
 
 		things.add(IMetaModelConstants.WIRINGPROPS);
 		things.add(IMetaModelConstants.APPS);
 		things.add(IMetaModelConstants.COMPONENTS);
-		
+
 		return things;
 	}
 
@@ -156,6 +159,23 @@ public class SwiperUtil {
 			}
 
 		}
+
+		if (id.equals(IMetaModelConstants.SCRIPTLIB)) {
+
+			if (StringUtil.equals(resource.getFileExtension(), "js")) {
+				return false;
+			}
+
+			if (StringUtil.equals(resource.getFileExtension(), "jss")) {
+				return false;
+			}
+
+			if (StringUtil.equals(resource.getFileExtension(), "lss")) {
+				return false;
+			}
+
+		}
+
 		if (getCanFilterIds().contains(id)) {
 
 			logTrace("Yes we can filter" + mmd.getName());
@@ -198,6 +218,10 @@ public class SwiperUtil {
 
 		return StringUtil.equalsIgnoreCase(Boolean.TRUE.toString(), stringValue);
 
+	}
+
+	public static Boolean isEnableForAll() {
+		return SwiperPreferenceManager.getInstance().getBooleanValue(SwiperPreferencePage.PREF_ENABLE_ALL, false);
 	}
 
 	public static Boolean isMimicDxlExportEOF() {
@@ -307,33 +331,32 @@ public class SwiperUtil {
 	public static boolean isLoggingToFile() {
 		return loggingToFile;
 	}
-	
+
 	public static void startLoggingToFile() {
 
 		logInfo("Starting Logging to File");
-		
-		Handler handler = SwiperActivator.getDefault().getFileHandler();		
+
+		Handler handler = SwiperActivator.getDefault().getFileHandler();
 		SWIPER_LOG.getLogger().addHandler(handler);
 		SWIPER_LOG.getLogger().setLevel(Level.ALL);
 		loggingToFile = true;
-			
+
 	}
-	
+
 	public static void stopLoggingToFile() {
 
 		logInfo("Stopping Logging to File");
-		
-		Handler handler = SwiperActivator.getDefault().getFileHandler();		
+
+		Handler handler = SwiperActivator.getDefault().getFileHandler();
 		SWIPER_LOG.getLogger().removeHandler(handler);
 		SWIPER_LOG.getLogger().setLevel(Level.INFO);
-		
+
 		loggingToFile = false;
 
 		SwiperActivator.getDefault().closeFileHandler();
 
-		
 	}
-	
+
 	public static void logInfo(String message) {
 		if (SWIPER_LOG.isInfoEnabled()) {
 			SWIPER_LOG.infop("SwiperUtil", "", "Swiper: " + message, new Object[0]);
@@ -522,6 +545,64 @@ public class SwiperUtil {
 
 		}
 		return null;
+
+	}
+
+	public static Set<String> getExtensionsToFilter() {
+		if (SwiperUtil.extensionsToFilter == null) {
+			SwiperUtil.extensionsToFilter = new HashSet<String>();
+
+			SwiperUtil.extensionsToFilter.add(".metadata");
+			SwiperUtil.extensionsToFilter.add(".aa");
+			SwiperUtil.extensionsToFilter.add(".column");
+			SwiperUtil.extensionsToFilter.add(".dcr");
+			SwiperUtil.extensionsToFilter.add(".fa");
+			SwiperUtil.extensionsToFilter.add(".field");
+			SwiperUtil.extensionsToFilter.add(".folder");
+			SwiperUtil.extensionsToFilter.add(".form");
+			SwiperUtil.extensionsToFilter.add(".frameset");
+			SwiperUtil.extensionsToFilter.add(".ija");
+			SwiperUtil.extensionsToFilter.add(".ja");
+			SwiperUtil.extensionsToFilter.add(".javalib");
+			SwiperUtil.extensionsToFilter.add(".lsa");
+			SwiperUtil.extensionsToFilter.add(".lsdb");
+			SwiperUtil.extensionsToFilter.add(".navigator");
+			SwiperUtil.extensionsToFilter.add(".outline");
+			SwiperUtil.extensionsToFilter.add(".page");
+			SwiperUtil.extensionsToFilter.add(".subform");
+			SwiperUtil.extensionsToFilter.add(".view");
+
+			SwiperUtil.extensionsToFilter.add("AboutDocument");
+			SwiperUtil.extensionsToFilter.add("database.properties");
+			SwiperUtil.extensionsToFilter.add("IconNote");
+			SwiperUtil.extensionsToFilter.add("Shared?Actions");
+			SwiperUtil.extensionsToFilter.add("UsingDocument");
+
+		}
+
+		return SwiperUtil.extensionsToFilter;
+	}
+
+	public static boolean shouldFilterDestinationFile(IResource res) {
+
+		String extension = res.getFileExtension();
+
+		if (StringUtil.isNotEmpty(extension)) {
+
+			if (getExtensionsToFilter().contains("." + extension)) {
+				return true;
+			}
+		}
+
+		String name = res.getName();
+
+		if (StringUtil.isNotEmpty(name)) {
+			if (getExtensionsToFilter().contains(name)) {
+				return true;
+			}
+		}
+
+		return false;
 
 	}
 
