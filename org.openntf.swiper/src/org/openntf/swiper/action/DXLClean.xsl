@@ -11,7 +11,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:n="http://www.lotus.com/dxl">
   <!-- Indent the result tree for more consistency when doing a diff - and it looks much nicer :) -->
-  <xsl:output indent="yes"/>
+  <!-- <xsl:output indent="no"/> -->
   <!-- Strip whitespace so that when we remove elements it does not leave ugly blank gaps -->
   <xsl:strip-space elements="*"/>
 

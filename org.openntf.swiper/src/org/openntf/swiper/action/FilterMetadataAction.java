@@ -8,15 +8,23 @@
  *******************************************************************************/
 package org.openntf.swiper.action;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -40,13 +48,17 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.openntf.swiper.util.SwiperUtil;
+import org.w3c.dom.Document;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.NsfException;
+import com.ibm.designer.domino.ide.resources.project.FacesRegistryMaintainer;
 import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
 import com.ibm.designer.domino.team.action.AbstractTeamHandler;
 import com.ibm.designer.domino.team.util.SyncUtil;
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 public class FilterMetadataAction extends AbstractTeamHandler {
 
@@ -337,6 +349,66 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 			}
 
+		}
+
+	}
+
+	public static void main(String[] args) {
+
+		FilterMetadataAction a = new FilterMetadataAction();
+
+		System.out.println("Hey");
+
+		try {
+			Transformer transformer = a.getTransformer();
+
+			InputStream is = new FileInputStream("D:\\Projects\\Swiper\\filterme.metadata");
+
+			FileOutputStream fos = new FileOutputStream("D:\\Projects\\Swiper\\filtered.metadata");
+
+			Source source = new StreamSource(is);
+
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			// transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
+			// "2");
+
+			transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
+
+			// StreamResult result = new StreamResult(new
+			// OutputStreamWriter(fos, "utf-8"));
+			StreamResult result = new StreamResult(fos);
+
+			transformer.transform(source, result);
+
+			is.close();
+
+			fos.close();
+
+			// return new ByteArrayInputStream(baos.toByteArray());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(System.getProperty("java.version"));
+
+		try {
+
+			File f = new File("D:\\Projects\\Swiper\\filterme.metadata");
+
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
+			Document doc = builder.parse(f);
+
+			OutputFormat format = new OutputFormat(doc);
+			format.setIndenting(true);
+			format.setIndent(2);
+			Writer output = new BufferedWriter(new FileWriter("D:\\Projects\\Swiper\\filteredxmlserial.metadata"));
+			XMLSerializer serializer = new XMLSerializer(output, format);
+			serializer.serialize(doc);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}
