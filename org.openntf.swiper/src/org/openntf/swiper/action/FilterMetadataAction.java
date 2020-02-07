@@ -108,6 +108,36 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 	}
 
+	public static Transformer createDefaultTransformer()
+			throws TransformerConfigurationException, FileNotFoundException {
+
+		Templates cachedXslt = null;
+
+		TransformerFactory factory = TransformerFactory.newInstance();
+		// Get Filter
+
+		InputStream is = null;
+		Source xslt = null;
+
+		is = FilterMetadataAction.class.getResourceAsStream(DEFAULT_FILTER);
+		xslt = new StreamSource(is);
+
+		cachedXslt = factory.newTemplates(xslt);
+
+		try {
+
+			if (is != null) {
+				is.close();
+			}
+
+		} catch (IOException e) {
+
+		}
+
+		return cachedXslt.newTransformer();
+
+	}
+
 	public Transformer getTransformer() throws TransformerConfigurationException, FileNotFoundException {
 
 		if (this.cachedXslt == null) {

@@ -8,10 +8,23 @@
  *******************************************************************************/
 package org.openntf.swiper.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -25,14 +38,21 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.openntf.swiper.SwiperActivator;
+import org.openntf.swiper.action.FilterMetadataAction;
 import org.openntf.swiper.builder.SwiperNature;
 import org.openntf.swiper.pref.SwiperPreferenceManager;
 import org.openntf.swiper.pref.SwiperPreferencePage;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.bdaum.overlayPages.FieldEditorOverlayPage;
 import com.ibm.commons.log.Log;
 import com.ibm.commons.log.LogMgr;
 import com.ibm.commons.util.StringUtil;
+import com.ibm.commons.util.io.FileUtil;
+import com.ibm.commons.xml.DOMUtil;
+import com.ibm.commons.xml.Format;
+import com.ibm.commons.xml.XMLException;
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.jni.NotesDesignElement;
 import com.ibm.designer.domino.ide.resources.metamodel.IMetaModelConstants;
@@ -206,6 +226,16 @@ public class SwiperUtil {
 
 	public static Boolean isMimicXmlDeclaration() {
 		return SwiperPreferenceManager.getInstance().getBooleanValue(SwiperPreferencePage.PREF_MIMICXMLDECL, false);
+	}
+
+	public static Boolean isDontOverwriteMetadata() {
+		return SwiperPreferenceManager.getInstance().getBooleanValue(SwiperPreferencePage.PREF_DONT_OVERWRITE_METADATA,
+				false);
+	}
+
+	public static Boolean isOnlyExportIfDifferent() {
+		return SwiperPreferenceManager.getInstance().getBooleanValue(SwiperPreferencePage.PREF_ONLY_EXPORT_IF_DIFFERENT,
+				false);
 	}
 
 	public static Boolean isMimicXmlDeclaration(IResource resource) {
@@ -386,6 +416,10 @@ public class SwiperUtil {
 
 	public static void logError(String message) {
 		SWIPER_LOG.error(message);
+	}
+
+	public static void logException(Throwable t, String Message) {
+		SWIPER_LOG.error(t, Message);
 	}
 
 	public static void addNature(IProject project) {
@@ -614,6 +648,159 @@ public class SwiperUtil {
 		}
 
 		return false;
+
+	}
+
+	private static void dumpInputStream(InputStream is, String filename) throws FileNotFoundException, IOException {
+
+		try (FileOutputStream outputStream = new FileOutputStream(filename)) {
+
+			int read;
+			byte[] bytes = new byte[1024];
+
+			while ((read = is.read(bytes)) != -1) {
+				outputStream.write(bytes, 0, read);
+			}
+
+		}
+
+	}
+
+	public static boolean contentsEqual(IResource source, IResource destination) {
+
+		try {
+
+			Transformer transformer = FilterMetadataAction.createDefaultTransformer();
+
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			dbf.setCoalescing(true);
+			dbf.setIgnoringElementContentWhitespace(true);
+			dbf.setIgnoringComments(true);
+
+			DocumentBuilder db = dbf.newDocumentBuilder();
+
+			boolean ismetadata = false;
+
+			Document doc1 = null;
+			Document doc2 = null;
+
+			if (destination instanceof IFile) {
+
+				IFile destFile = (IFile) destination;
+
+				if (SwiperUtil.isMetadata(destFile)) {
+					ismetadata = true;
+				}
+
+				// if (ismetadata) {
+				//
+				// try (InputStream is = destFile.getContents(true)) {
+				// InputStream filtered = getFilteredInputStreamUsingDOMUtil(is,
+				// transformer);
+				// dumpInputStream(filtered,
+				// "D:\\Projects\\Swiper\\destinationmetadata.txt");
+				// }
+				// }
+
+				try (InputStream is = destFile.getContents(true)) {
+
+					InputStream filtered = getFilteredInputStreamUsingDOMUtil(is, transformer);
+
+					doc2 = db.parse(filtered);
+					doc2.normalizeDocument();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			if (source instanceof IFile) {
+
+				IFile sourcefile = (IFile) source;
+
+				if (ismetadata) {
+
+					// You would need to get the metadata
+					NotesDesignElement localNotesDesignElement = DominoResourcesPlugin
+							.getNotesDesignElement(sourcefile);
+
+					// try (InputStream is =
+					// localNotesDesignElement.fetchMetadata(0, new
+					// NullProgressMonitor())) {
+					// InputStream filtered =
+					// getFilteredInputStreamUsingDOMUtil(is, transformer);
+					// dumpInputStream(filtered,
+					// "D:\\Projects\\Swiper\\sourcemetadata.txt");
+					// }
+
+					try (InputStream is = localNotesDesignElement.fetchMetadata(0, new NullProgressMonitor())) {
+
+						InputStream filtered = getFilteredInputStreamUsingDOMUtil(is, transformer);
+
+						doc1 = db.parse(filtered);
+						doc1.normalizeDocument();
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				} else {
+
+					try (InputStream is = sourcefile.getContents(true)) {
+
+						doc1 = db.parse(is);
+						doc1.normalizeDocument();
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				}
+
+			}
+
+			if (doc1 != null && doc2 != null) {
+				return doc1.isEqualNode(doc2);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return false;
+
+	}
+
+	public static boolean isMetadata(IFile file) {
+
+		if (file == null) {
+			return false;
+		}
+
+		return StringUtil.equalsIgnoreCase(file.getFileExtension(), "metadata");
+
+	}
+
+	private static InputStream getFilteredInputStreamUsingDOMUtil(InputStream is, Transformer transformer)
+			throws TransformerException, CoreException, IOException {
+
+		SwiperUtil.logTrace("Filtering Using DOMUtil");
+
+		try {
+
+			Source source = new StreamSource(is);
+
+			DOMResult result = new DOMResult();
+			transformer.transform(source, result);
+
+			String xml = DOMUtil.getXMLString(result.getNode(), Format.defaultFormat);
+			return new ByteArrayInputStream(xml.getBytes());
+
+		} catch (XMLException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 

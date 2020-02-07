@@ -8,11 +8,20 @@
  *******************************************************************************/
 package org.openntf.swiper.builder;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -24,9 +33,9 @@ import org.openntf.swiper.action.FilterMetadataAction;
 import org.openntf.swiper.util.SwiperUtil;
 
 import com.ibm.commons.util.StringUtil;
-import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
-import com.ibm.designer.domino.ide.resources.NsfException;
-import com.ibm.designer.domino.ide.resources.jni.NotesDesignElement;
+import com.ibm.commons.xml.DOMUtil;
+import com.ibm.commons.xml.Format;
+import com.ibm.commons.xml.XMLException;
 import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
 import com.ibm.designer.domino.team.builder.ExportContext;
 import com.ibm.designer.domino.team.builder.ISyncContext;
@@ -90,7 +99,7 @@ public class SwiperSyncListener extends SyncListener {
 				}
 
 			}
-			
+
 		} catch (Exception e) {
 			SwiperUtil.logTrace(e.getMessage());
 		}
@@ -106,6 +115,7 @@ public class SwiperSyncListener extends SyncListener {
 			SwiperUtil.logTrace("POST RENAME: " + dst.getFullPath() + "'" + dst.getFileExtension() + "'");
 
 			filterIfNeeded(designerProject, renameContext.getNewNsfFile(), dst, context);
+
 		}
 
 		super.postRename(src, dst, context);
@@ -116,12 +126,12 @@ public class SwiperSyncListener extends SyncListener {
 
 		if (synccontext instanceof ExportContext) {
 			try {
+
 				SwiperUtil.logTrace("POST EXPORT: " + dst.getFullPath() + "'" + dst.getFileExtension() + "'");
 				IDominoDesignerProject designerProject = ((ExportContext) synccontext).getDesignerProject();
 				filterIfNeeded(designerProject, src, dst, synccontext);
 
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -129,191 +139,63 @@ public class SwiperSyncListener extends SyncListener {
 		super.postExport(src, dst, synccontext);
 	}
 
-	@SuppressWarnings("unused")
-	private boolean equalsHash(IResource src, IResource dst)
-			throws NoSuchAlgorithmException, NsfException, CoreException, IOException {
+	@Override
+	public boolean preExport(IResource src, IResource dst, ISyncContext synccontext) {
 
-		// Hash Source
-		MessageDigest md = MessageDigest.getInstance("MD5");
+		if (synccontext instanceof ExportContext) {
 
-		NotesDesignElement nde = DominoResourcesPlugin.getNotesDesignElement(src);
-		InputStream is = nde.fetchSyncContent(0, monitor);
-		DigestInputStream dis = new DigestInputStream(is, md);
-		byte[] digestsrc = md.digest();
+			try {
 
-		is.close();
+				ExportContext context = (ExportContext) synccontext;
 
-		md.reset();
+				if (context.getDesignerProject().getProject().hasNature(SwiperNature.NATURE_ID)) {
 
-		// Hash Dst
-		MessageDigest md2 = MessageDigest.getInstance("MD5");
+					SwiperUtil.logTrace("PRE EXPORT Src " + src.getFullPath());
+					SwiperUtil.logTrace("PRE EXPORT Dst " + dst.getFullPath());
 
-		IFile dstFile = (IFile) dst;
+					if (SwiperUtil.shouldFilter(src)) {
 
-		is = dstFile.getContents(true);
-		dis = new DigestInputStream(is, md2);
-		byte[] digestdst = md2.digest();
+						if (dst instanceof IFile) {
 
-		is.close();
+							IFile dstFile = (IFile) dst;
 
-		String srchash = bytesToHex(digestsrc);
-		String dsthash = bytesToHex(digestdst);
+							try {
 
-		return StringUtil.equals(srchash, dsthash);
-	}
+								if (dstFile.exists()) {
 
-	@SuppressWarnings("unused")
-	private boolean equalsHash(InputStream src, InputStream dst)
-			throws NoSuchAlgorithmException, NsfException, CoreException, IOException {
+									if (SwiperUtil.isMetadata(dstFile) && SwiperUtil.isDontOverwriteMetadata()) {
+										SwiperUtil.logTrace("No Export - set to Don't Overwrite existing metadata: "
+												+ dst.getFullPath());
+										return false;
+									}
 
-		// Hash Source
-		MessageDigest md = MessageDigest.getInstance("MD5");
+									if (SwiperUtil.isOnlyExportIfDifferent()
+											&& SwiperUtil.contentsEqual(src, dst)) {
+										return false;
+									}
 
-		DigestInputStream dis = new DigestInputStream(src, md);
-		byte[] digestsrc = md.digest();
+								}
 
-		src.close();
+							} catch (Exception e) {
+								SwiperUtil.logException(e, "Error in PRE EXPORT");
+							}
 
-		// Hash Dst
-		MessageDigest md2 = MessageDigest.getInstance("MD5");
+						}
 
-		dis = new DigestInputStream(dst, md2);
-		byte[] digestdst = md2.digest();
+					} else {
+						SwiperUtil.logTrace(" No Need to filter " + src.getFullPath());
+					}
 
-		dst.close();
+				}
 
-		String srchash = bytesToHex(digestsrc);
-		String dsthash = bytesToHex(digestdst);
-
-		return StringUtil.equals(srchash, dsthash);
-	}
-
-	public boolean preExport(IResource src, IResource dst, ExportContext context) {
-
-		/*
-		 * Hoping to figure out how to avoid filtering if contents are the same
-		 * but haven't done so yet try {
-		 * 
-		 * if (context.getDesignerProject().getProject().hasNature(SwiperNature.
-		 * NATURE_ID)) {
-		 * 
-		 * System.out.println("PRE EXPORT " + dst.getFullPath());
-		 * 
-		 * if (SwiperUtil.shouldFilter(src)) {
-		 * 
-		 * if (dst instanceof IFile) {
-		 * 
-		 * IFile dstFile = (IFile) dst;
-		 * 
-		 * try {
-		 * 
-		 * Transformer transformer = action.getTransformer(); InputStream is =
-		 * action.getFilteredInputStream(dstFile, transformer, monitor);
-		 * 
-		 * InputStream destIs = dstFile.getContents(true);
-		 * 
-		 * if (SyncUtil.contentsEqual(is, destIs)) { System.out.println(
-		 * "Filtered Contents Equal =="); } else { System.out.println(
-		 * "Filtered Contents Different <>"); }
-		 * 
-		 * if (src instanceof IFile) {
-		 * 
-		 * if (equalsHash(((IFile) src).getContents(true), destIs)) {
-		 * System.out.println("Filtered Contents Hash equal =="); } else {
-		 * System.out.println("Filtered Contents Hash different <>"); } }
-		 * 
-		 * } catch (Exception e) {
-		 * 
-		 * }
-		 * 
-		 * }
-		 * 
-		 * } else { System.out.println(" No Need to filter " +
-		 * src.getFullPath()); }
-		 * 
-		 * }
-		 * 
-		 * } catch (CoreException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
+			} catch (CoreException e) {
+				SwiperUtil.logException(e, "Error in PRE EXPORT");
+			}
+		}
 
 		return true;
-		// try {
-		//
-		// if
-		// (context.getDesignerProject().getProject().hasNature(SwiperNature.NATURE_ID))
-		// {
-		//
-		// System.out.println("PRE EXPORT " + dst.getFullPath());
-		//
-		// if (SwiperUtil.shouldFilter(src)) {
-		//
-		// if (dst instanceof IFile) {
-		//
-		// System.out.println("Checking Hashes for " + src.getFullPath());
-		//
-		// // Hash Source
-		// MessageDigest md = MessageDigest.getInstance("MD5");
-		//
-		// NotesDesignElement nde =
-		// DominoResourcesPlugin.getNotesDesignElement(src);
-		// InputStream is = nde.fetchSyncContent(0, monitor);
-		// DigestInputStream dis = new DigestInputStream(is, md);
-		// byte[] digestsrc = md.digest();
-		//
-		// is.close();
-		//
-		// md.reset();
-		//
-		// // Hash Dst
-		// MessageDigest md2 = MessageDigest.getInstance("MD5");
-		//
-		// IFile dstFile = (IFile) dst;
-		//
-		// is = dstFile.getContents(true);
-		// dis = new DigestInputStream(is, md2);
-		// byte[] digestdst = md2.digest();
-		//
-		// is.close();
-		//
-		// String srchash = bytesToHex(digestsrc);
-		// String dsthash = bytesToHex(digestdst);
-		//
-		// System.out.println("Hash Src : " + srchash);
-		// System.out.println("Hash Dst : " + dsthash);
-		//
-		// if (StringUtil.equals(srchash, dsthash)) {
-		// System.out.println("DONT EXPORT IT");
-		// //return false;
-		// }
-		//
-		// }
-		//
-		// } else {
-		// System.out.println(" No Need to filter " + src.getFullPath());
-		// }
-		//
-		// }
-		//
-		// } catch (CoreException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (NoSuchAlgorithmException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (NsfException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// return true;
-	}
 
-	// From
-	// http://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java
+	}
 
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
 

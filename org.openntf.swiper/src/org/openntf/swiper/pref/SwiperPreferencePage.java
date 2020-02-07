@@ -25,7 +25,9 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 	public static final String PREF_MIMICXMLDECL = "mimicXmlDeclaration";
 	public static final String PREF_MIMIC_DXLEXPORT_EOF = "mimicDxlExportEof";
 	public static final String PREF_ENABLE_ALL = "enableForAll";
+	public static final String PREF_DONT_OVERWRITE_METADATA = "alwaysOverwriteMetadata";
 	public static final String PREF_USE_DOMUTIL_FOR_FILTERING = "useDOMUtilForExport";
+	public static final String PREF_ONLY_EXPORT_IF_DIFFERENT = "onlyExportIfDifferent";
 
 	public SwiperPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -45,11 +47,10 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 	@Override
 	protected void createFieldEditors() {
 
-		
 		FileFieldEditor defaultFilter = new FileFieldEditor(PREF_CUST_FILTER, "Custom XSLT Filter",
-				getFieldEditorParent());	
+				getFieldEditorParent());
 		addField(defaultFilter);
-		
+
 		BooleanFieldEditor mimcXmlDeclaration = new BooleanFieldEditor(PREF_MIMICXMLDECL,
 				"Mimic Dora XML Declaration (no 'encoding=UTF-8')", getFieldEditorParent());
 		addField(mimcXmlDeclaration);
@@ -57,16 +58,25 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 		BooleanFieldEditor dontAddNewLine = new BooleanFieldEditor(PREF_MIMIC_DXLEXPORT_EOF,
 				"Mimic EOF of DXL Export (Add extra Line Endings to end of file)", getFieldEditorParent());
 		addField(dontAddNewLine);
-		
+
+		BooleanFieldEditor alwaysOverwriteMetadata = new BooleanFieldEditor(PREF_DONT_OVERWRITE_METADATA,
+				"Don't Overwrite Existing Metadata files", getFieldEditorParent());
+		addField(alwaysOverwriteMetadata);
+
+		BooleanFieldEditor onlyIfDifferent = new BooleanFieldEditor(PREF_ONLY_EXPORT_IF_DIFFERENT,
+				"Only Export if will be different", getFieldEditorParent());
+		addField(onlyIfDifferent);
+
 		BooleanFieldEditor useDOMUtil = new BooleanFieldEditor(PREF_USE_DOMUTIL_FOR_FILTERING,
 				"Use DOMUtil for Filtering", getFieldEditorParent());
 		addField(useDOMUtil);
 
 		if (!isPropertyPage()) {
-			BooleanFieldEditor enableAll = new BooleanFieldEditor(PREF_ENABLE_ALL, "Enable Swiper for ALL Projects", getFieldEditorParent());
+			BooleanFieldEditor enableAll = new BooleanFieldEditor(PREF_ENABLE_ALL, "Enable Swiper for ALL Projects",
+					getFieldEditorParent());
 			addField(enableAll);
 		}
-		
+
 	}
 
 	@Override
