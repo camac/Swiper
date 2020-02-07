@@ -183,9 +183,20 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 	private InputStream getFilteredInputStreamUsingDOMUtil(IFile diskFile, Transformer transformer,
 			IProgressMonitor monitor) throws TransformerException, CoreException, IOException {
 
+		try (InputStream is = diskFile.getContents(true)) {
+			return getFilteredInputStreamUsingDOMUtil(is, transformer, monitor);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	private InputStream getFilteredInputStreamUsingDOMUtil(InputStream is, Transformer transformer,
+			IProgressMonitor monitor) throws TransformerException, CoreException, IOException {
+
 		SwiperUtil.logTrace("Filtering Using DOMUtil");
 
-		try (InputStream is = diskFile.getContents(true)) {
+		try {
 
 			Source source = new StreamSource(is);
 
@@ -447,58 +458,61 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 	public static void main(String[] args) {
 
-		FilterMetadataAction a = new FilterMetadataAction();
+		File dir = new File("D:\\Projects\\Hapi\\Hapi.JobHub\\com.jord.hapi.jobhub.nsf\\CustomControls");
 
-		System.out.println("Hey");
+		int count = 0;
 
-		try {
-			Transformer transformer = a.getTransformer();
+		for (File file : dir.listFiles()) {
 
-			InputStream is = new FileInputStream("D:\\Projects\\Swiper\\filterme.metadata");
+			if (count > 500000) {
+				return;
+			}
 
-			FileOutputStream fos = new FileOutputStream("D:\\Projects\\Swiper\\filtered.metadata");
+			if (file.getName().endsWith("xsp-config")) {
+				addRenderMarkup(file);
+				count++;
+			}
 
-			Source source = new StreamSource(is);
-
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			// transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
-			// "2");
-
-			transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
-
-			// StreamResult result = new StreamResult(new
-			// OutputStreamWriter(fos, "utf-8"));
-			StreamResult result = new StreamResult(fos);
-
-			transformer.transform(source, result);
-
-			is.close();
-
-			fos.close();
-
-			// return new ByteArrayInputStream(baos.toByteArray());
-
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
-		System.out.println(System.getProperty("java.version"));
+	}
+
+	public static void addRenderMarkup(String filename) {
+
+	}
+
+	public static void addRenderMarkup(File file) {
 
 		try {
 
-			File f = new File("D:\\Projects\\Swiper\\filterme.metadata");
+			TransformerFactory factory = TransformerFactory.newInstance();
+			// Get Filter
+			FilterMetadataAction a = new FilterMetadataAction();
 
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
+			InputStream is = a.getClass().getResourceAsStream("DXLCustomControlRenderMarkup.xsl");
+			Source xslt = new StreamSource(is);
 
-			Document doc = builder.parse(f);
+			Templates cachedXslt = factory.newTemplates(xslt);
 
-			OutputFormat format = new OutputFormat(doc);
-			format.setIndenting(true);
-			format.setIndent(2);
-			Writer output = new BufferedWriter(new FileWriter("D:\\Projects\\Swiper\\filteredxmlserial.metadata"));
-			XMLSerializer serializer = new XMLSerializer(output, format);
-			serializer.serialize(doc);
+			try {
+
+				if (is != null) {
+					is.close();
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			Transformer transformer = cachedXslt.newTransformer();
+
+			FileInputStream fis = new FileInputStream(file);
+			InputStream ois = a.getFilteredInputStreamUsingDOMUtil(fis, transformer, new NullProgressMonitor());
+			fis.close();
+			
+			SwiperUtil.dumpInputStream(ois, file.getAbsolutePath());
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

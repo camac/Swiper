@@ -651,7 +651,7 @@ public class SwiperUtil {
 
 	}
 
-	private static void dumpInputStream(InputStream is, String filename) throws FileNotFoundException, IOException {
+	public static void dumpInputStream(InputStream is, String filename) throws FileNotFoundException, IOException {
 
 		try (FileOutputStream outputStream = new FileOutputStream(filename)) {
 
