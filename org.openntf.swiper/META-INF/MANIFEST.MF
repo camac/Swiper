@@ -19,7 +19,8 @@ Require-Bundle: org.eclipse.ui,
  com.ibm.commons.iloader,
  com.ibm.commons.swt.data,
  com.ibm.commons,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ com.ibm.commons.xml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Export-Package: org.openntf.swiper,

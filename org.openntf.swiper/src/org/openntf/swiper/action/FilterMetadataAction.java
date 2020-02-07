@@ -32,6 +32,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -51,12 +52,16 @@ import org.openntf.swiper.util.SwiperUtil;
 import org.w3c.dom.Document;
 
 import com.ibm.commons.util.StringUtil;
+import com.ibm.commons.xml.DOMUtil;
+import com.ibm.commons.xml.Format;
+import com.ibm.commons.xml.XMLException;
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.NsfException;
 import com.ibm.designer.domino.ide.resources.project.FacesRegistryMaintainer;
 import com.ibm.designer.domino.ide.resources.project.IDominoDesignerProject;
 import com.ibm.designer.domino.team.action.AbstractTeamHandler;
 import com.ibm.designer.domino.team.util.SyncUtil;
+import com.sun.istack.internal.logging.Logger;
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
@@ -71,6 +76,7 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 	private String customFilterPath = null;
 	private boolean mimicDoraXmlDeclaration = false;
 	private boolean mimicDxlExportEOF = false;
+	private boolean useDOMUtil = false;
 
 	private Templates cachedXslt = null;
 
@@ -86,6 +92,8 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 			this.customFilterPath = SwiperUtil.getCustomFilterFilePath(prj);
 			this.mimicDoraXmlDeclaration = SwiperUtil.isMimicXmlDeclaration(prj);
 			this.mimicDxlExportEOF = SwiperUtil.isMimicDxlExportEOF(prj);
+			this.useDOMUtil = SwiperUtil.isUseDOMUtilForFiltering(prj);
+
 		} else {
 			SwiperUtil.logError("DesignerProject.getProject() is null, couldn't retrieve Swiper settings");
 		}
@@ -142,9 +150,63 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 
 	}
 
+	private InputStream getFilteredInputStreamUsingDOMUtil(IFile diskFile, Transformer transformer,
+			IProgressMonitor monitor) throws TransformerException, CoreException, IOException {
+
+		SwiperUtil.logTrace("Filtering Using DOMUtil");
+
+		try (InputStream is = diskFile.getContents(true)) {
+
+			Source source = new StreamSource(is);
+
+			DOMResult result = new DOMResult();
+			transformer.transform(source, result);
+
+			String xml = DOMUtil.getXMLString(result.getNode(), Format.defaultFormat);
+			return new ByteArrayInputStream(xml.getBytes());
+
+		} catch (XMLException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	@SuppressWarnings("unused")
+	private InputStream getFilteredInputStreamUsingXMLSerializer(IFile diskFile, Transformer transformer,
+			IProgressMonitor monitor) {
+
+		SwiperUtil.logTrace("Filtering Using XML Serializer");
+
+		try (InputStream is = diskFile.getContents(true)) {
+
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
+			Document doc = builder.parse(is);
+
+			OutputFormat format = new OutputFormat(doc);
+			format.setIndenting(true);
+			format.setIndent(2);
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			XMLSerializer serializer = new XMLSerializer(baos, format);
+			serializer.serialize(doc);
+
+			return new ByteArrayInputStream(baos.toByteArray());
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
 	public InputStream getFilteredInputStream(IFile diskFile, Transformer transformer, IProgressMonitor monitor)
 			throws TransformerException, CoreException, IOException {
-		
+
+		if (useDOMUtil) {
+			return getFilteredInputStreamUsingDOMUtil(diskFile, transformer, monitor);
+		}
+
 		InputStream is = diskFile.getContents(true);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		Source source = new StreamSource(is);
@@ -169,16 +231,16 @@ public class FilterMetadataAction extends AbstractTeamHandler {
 		transformer.transform(source, result);
 
 		is.close();
-		
-		return new ByteArrayInputStream(baos.toByteArray());		
-		
+
+		return new ByteArrayInputStream(baos.toByteArray());
+
 	}
-	
+
 	private void filter(IFile diskFile, Transformer transformer, IProgressMonitor monitor)
 			throws TransformerException, CoreException, IOException {
 
 		InputStream is = getFilteredInputStream(diskFile, transformer, monitor);
-		
+
 		diskFile.setContents(is, 0, monitor);
 
 		/*

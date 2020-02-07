@@ -25,6 +25,7 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 	public static final String PREF_MIMICXMLDECL = "mimicXmlDeclaration";
 	public static final String PREF_MIMIC_DXLEXPORT_EOF = "mimicDxlExportEof";
 	public static final String PREF_ENABLE_ALL = "enableForAll";
+	public static final String PREF_USE_DOMUTIL_FOR_FILTERING = "useDOMUtilForExport";
 
 	public SwiperPreferencePage() {
 		super(FieldEditorPreferencePage.GRID);
@@ -57,6 +58,10 @@ public class SwiperPreferencePage extends FieldEditorOverlayPage implements IWor
 				"Mimic EOF of DXL Export (Add extra Line Endings to end of file)", getFieldEditorParent());
 		addField(dontAddNewLine);
 		
+		BooleanFieldEditor useDOMUtil = new BooleanFieldEditor(PREF_USE_DOMUTIL_FOR_FILTERING,
+				"Use DOMUtil for Filtering", getFieldEditorParent());
+		addField(useDOMUtil);
+
 		if (!isPropertyPage()) {
 			BooleanFieldEditor enableAll = new BooleanFieldEditor(PREF_ENABLE_ALL, "Enable Swiper for ALL Projects", getFieldEditorParent());
 			addField(enableAll);

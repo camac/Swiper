@@ -229,6 +229,17 @@ public class SwiperUtil {
 				false);
 	}
 
+	public static Boolean isUseDOMUtilForFiltering(IResource resource) {
+		IPreferenceStore store = SwiperPreferenceManager.getInstance().getPreferenceStore();
+		String pageId = SwiperPreferencePage.PAGE_ID;
+
+		String stringValue = getOverlayedPreferenceValue(store, resource, pageId,
+				SwiperPreferencePage.PREF_USE_DOMUTIL_FOR_FILTERING);
+
+		return StringUtil.equalsIgnoreCase(Boolean.TRUE.toString(), stringValue);
+
+	}
+
 	public static Boolean isMimicDxlExportEOF(IResource resource) {
 		IPreferenceStore store = SwiperPreferenceManager.getInstance().getPreferenceStore();
 		String pageId = SwiperPreferencePage.PAGE_ID;
