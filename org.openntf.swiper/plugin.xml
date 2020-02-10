@@ -308,6 +308,16 @@
 
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.openntf.swiper.SwiperSourceOnlyEditor"
+            contributorClass="org.openntf.swiper.SwiperSourceOnlyEditorContributor"
+            default="false"
+            id="org.openntf.swiper.sourceonlyeditor"
+            name="Swiper Source Only Editor">
+      </editor>
+   </extension>
 
 
 </plugin>
